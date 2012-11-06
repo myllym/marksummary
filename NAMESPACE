@@ -1,0 +1,8 @@
+export(summ_func)
+export(summ_func_random_labelling)
+importFrom(abind,abind)
+importFrom(spatstat,area.owin)
+importFrom(spatstat,is.empty.ppp)
+importFrom(spatstat,is.ppp)
+importFrom(spatstat,pairdist.ppp)
+useDynLib(marksummary)

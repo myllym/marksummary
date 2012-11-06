@@ -1,0 +1,5 @@
+marksummary is for calculating summary functions for marked point patterns. Currently it implements only the K_f functions for different mark test functions f. It also provides the ability to calculate simulations for the hypothesis of random labelling.
+
+marksummary accompanies the fine library spatstat to use a couple of its features.
+
+The main function is summ_func_random_labelling.

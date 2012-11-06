@@ -1,0 +1,19 @@
+Package: marksummary
+Authors@R: c(
+    person(given = 'Henri', family = 'Seijo', role = c('aut', 'cre'),
+    email = 'henri.seijo@iki.fi'),
+    person(given = 'Mari', family = 'Myllymäki', role = 'ths',
+    email = list('mari.myllymaki@aalto.fi', 'mari.j.myllymaki@gmail.com'))
+    )
+Version: 1.0
+License: GPL-3
+Title: Calculate summary functions for marked point patterns.
+Description: Calculate K_f summary functions for marked point patterns where
+    f stands for different mark test functions.
+Imports:
+    abind,
+    Rcpp,
+    spatstat
+Collate:
+    'marksummary-package.r'
+    'summ_func.r'
