@@ -5,6 +5,7 @@ SEXP sum_vector(SEXP sValue, SEXP sIdxVec, SEXP sNBin) {
 
     Rcpp::NumericVector value(sValue);
     Rcpp::IntegerVector idxVec(sIdxVec);
+    // Rcpp uses int instead of size_t. Limitation of R.
     int nBin = Rcpp::as<int>(sNBin);
     int nPair = value.size();
 

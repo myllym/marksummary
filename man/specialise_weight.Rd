@@ -1,8 +1,8 @@
-\name{diverse_weight}
-\alias{diverse_weight}
+\name{specialise_weight}
+\alias{specialise_weight}
 \title{Create an individual weight vector for each mark test function.}
 \usage{
-  diverse_weight(weight_vec, mark_stat, mtf_name,
+  specialise_weight(weight_vec, mark_stat, mtf_name,
     one_per_lambda2)
 }
 \value{

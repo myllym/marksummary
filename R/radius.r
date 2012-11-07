@@ -78,6 +78,9 @@ create_r_vec <- function(r_max, min_window_side, n_max_break = 2048L) {
 #' r-interval [0, 0] is never returned.
 #'
 #' Also varying step size in r_vec is handled correctly.
+#' @param r_vec The radius vector which defines the endpoints of the bins.
+#' @return A function that turns the distance between a pair of points into
+#'   a bin index.
 create_binning_func <- function(r_vec) {
     n_r <- length(r_vec)
     if (n_r == 1L) {
@@ -143,8 +146,7 @@ pairs_within_r_max <- function(dist_m, r_max) {
 #' (nearby_arr_idx) and the indices of the bins in which those point pairs
 #' belong to distance-wise (bin_idx).
 #' @importFrom spatstat pairdist.ppp
-consider_radius <- function(pattern, r_max = NULL, r_vec = NULL,
-                            do_order_pairs = TRUE) {
+consider_radius <- function(pattern, r_max = NULL, r_vec = NULL) {
     min_window_side <- min_window_side_length(pattern)
 
     if (length(r_vec) > 0L) {
@@ -164,27 +166,25 @@ consider_radius <- function(pattern, r_max = NULL, r_vec = NULL,
     dist_m <- spatstat::pairdist.ppp(pattern)
     nearby_arr_idx <- pairs_within_r_max(dist_m, r_max)
 
-    if (do_order_pairs) {
-        nearby_dist <- dist_m[nearby_arr_idx]
-        order_idx <- order(nearby_dist)
-        nearby_arr_idx <- nearby_arr_idx[order_idx, , drop = FALSE]
-    }
-
     bin_idx <- binning_func(dist_m[nearby_arr_idx])
 
     list(r_vec = r_vec, n_bin = n_bin, nearby_arr_idx = nearby_arr_idx,
          bin_idx = bin_idx)
 }
 
-#' Choose those marks that are within the radius.
+#' Choose the marks of those pairs where the distance between the point pair
+#' is smaller than the maximum radius.
+#'
+#' Well, actually we select those marks that the index matrix points to.
 #'
 #' @param marks A vector containing all the marks of the point pattern in
 #'   the order of the points.
-#' @param nearby_arr_idx A logical vector that picks the points within maximum
-#'   radius. A picked mark will be picked twice to accommodate for the
-#'   point pair ordering.
-#' @return A vector of only the needed marks, ordered.
+#' @param nearby_arr_idx A logical matrix that picks the points within
+#'   maximum radius. A picked mark will be picked twice to accommodate for
+#'   the point pair ordering.
+#' @return A list of two mark vectors, mark1 and mark2.
 marks_within_radius <- function(marks, nearby_arr_idx) {
+    # Picking from a vector of length n with a matrix of size p x 2.
     mark1_mark2_m <- matrix(marks[nearby_arr_idx], ncol = 2L)
     mark1 <- mark1_mark2_m[, 1, drop = TRUE]
     mark2 <- mark1_mark2_m[, 2, drop = TRUE]

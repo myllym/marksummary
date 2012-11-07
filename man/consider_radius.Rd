@@ -2,8 +2,7 @@
 \alias{consider_radius}
 \title{Handle things considering the radius vector.}
 \usage{
-  consider_radius(pattern, r_max = NULL, r_vec = NULL,
-    do_order_pairs = TRUE)
+  consider_radius(pattern, r_max = NULL, r_vec = NULL)
 }
 \value{
   A list containing the radius vector (r_vec), the number

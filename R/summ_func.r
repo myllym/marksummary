@@ -229,9 +229,32 @@ summ_func <- function(..., n_perm = 0L) {
 #' Calculates summary functions for a pattern and its simulations under the
 #' hypothesis of random labelling.
 #'
-#' @return An array containing the summary functions for the original
-#'   pattern and the randomly labelled patterns. Dimensions: orig_and_perm,
-#'   summ_func, r.
+#' @param pattern A \code{\link[spatstat]{ppp}} object as the simple marked
+#'   point pattern to be analysed. The marks need to be in the form of a
+#'   numeric vector. The window has to have the type "rectangle".
+#' @param edge_corr_func The edge correction function to be used. The
+#'   function will be fed with the pattern object.
+#' @param mtf_name A vector of mark test function names. "1" stands for the
+#'   unmarked K-function.
+#' @param n_perm The number of permutations.
+#' @param r_max A positive scalar value representing the maximum radius that
+#'   should be considered. r_vec overrides r_max. By default, r_max is NULL
+#'   and will be determined internally.
+#' @param r_vec A monotonically increasing vector of non-negative r-values
+#'   to act as the endpoints of the bins for the K_f-functions. r_vec
+#'   overrides r_max. The bins are exclusive on the left and inclusive on
+#'   the right. If the first vector element has value zero, it will be
+#'   regarded as the collapsed bin [0, 0], and the next bin will start from
+#'   and exclude 0.
+#' @param do_besags_L A boolean describing whether Besag's L-function should
+#'   also be returned where available.
+#' @param method The name of the method to create simulations under the null
+#'   hypothesis.
+#' @param ... Currently unused.
+#' @return An array containing the summary function estimates for the
+#'   original pattern and the randomly labelled patterns. Dimensions:
+#'   orig_and_perm, summ_func, r. The estimates for the original pattern are
+#'   on the row named "original".
 #' @importFrom spatstat pairdist.ppp
 #' @importFrom abind abind
 #' @export
@@ -240,7 +263,7 @@ summ_func_random_labelling <-
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'mor',
                           'morAbs'),
              n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
-             method = 'permute', do_order_pairs = TRUE, ...) {
+             method = 'permute', ...) {
 
     # Check input.
     #
@@ -269,8 +292,7 @@ summ_func_random_labelling <-
              'non-negative number.')
     }
 
-    radius_l <- consider_radius(pattern, r_max = r_max, r_vec = r_vec,
-                                do_order_pairs = do_order_pairs)
+    radius_l <- consider_radius(pattern, r_max = r_max, r_vec = r_vec)
     r_vec <- radius_l[['r_vec']]
     n_bin <- radius_l[['n_bin']]
     nearby_arr_idx <- radius_l[['nearby_arr_idx']]

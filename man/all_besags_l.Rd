@@ -10,7 +10,6 @@ L-transform.}
   patterns. Dimensions: orig_and_perm, summ_func, r.}
 }
 \description{
-  Make sure that only the non-negative functions will get
-  Besag's L-transform.
+  FIXME: Consider negative marks.
 }
 
