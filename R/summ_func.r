@@ -113,16 +113,28 @@ mark_distr_stats <- function(marks, mtf_name) {
 #' @importFrom spatstat is.empty.ppp
 check_pattern <- function(pattern) {
     if (!spatstat::is.ppp(pattern)) {
-        stop('The pattern should be a ppp object.')
+        stop('The pattern must be a ppp object.')
     }
     if (spatstat::is.empty.ppp(pattern)) {
-        stop('The pattern should not be empty.')
+        stop('The pattern must not be empty.')
     }
-    if (length(pattern[['marks']]) < 1L) {
-        stop('The pattern does not have marks.')
+    marks <- pattern[['marks']]
+    if (length(marks) < 1L) {
+        stop('The pattern must have marks.')
+    }
+    if (pattern[['markformat']] != 'vector') {
+        stop('The markformat must be vector.')
+    }
+    if (!is.numeric(marks)) {
+        stop('The marks must be of type numeric or integer.')
     }
     if (pattern[['window']][['type']] != 'rectangle') {
-        stop('The window needs to have type \"rectangle\".')
+        stop('The window must have type \"rectangle\".')
+    }
+    if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
+                       MARGIN = 1L))) {
+        stop('The pattern must be simple i.e. without duplicate points ',
+             'location-wise.')
     }
 }
 
@@ -132,49 +144,15 @@ check_pattern <- function(pattern) {
 #' TODO: Consider unbiased estimator.
 #'
 #' @importFrom spatstat area.owin
-one_per_lambda_to_two <- function(pattern) {
+one_per_lambda_to_the_second <- function(pattern) {
     area <- spatstat::area.owin(pattern[['window']])
     n <- pattern[['n']]
     one_per_lambda2 <- area * area / (n * n)
+    #one_per_lambda2 <- area * area / (n * (n - 1L))
 }
 
-#' Return the length of the shorter window side.
-min_window_side_length <- function(window) {
-    with(window, min(diff(xrange), diff(yrange)))
-}
 
-#' Round non-negative numbers and change them to integers.
-round_nonneg_int <- function(x) {
-    if (any(x < 0)) {
-        stop('x should be non-negative.')
-    }
-    as.integer(x + 0.5)
-}
 
-#' Create the radius vector and all related variables.
-create_radius_vec <- function(r_max, min_window_side, n_max_bin = 2048L) {
-    r_max_ratio <- r_max / min_window_side
-    n_bin_num <- r_max_ratio * n_max_bin
-    n_bin <- round_nonneg_int(n_bin_num)
-    index_factor <- n_bin / r_max
-    r_vec <- 1 / index_factor * seq(0L, n_bin, by = 1L)
-    list(r_vec = r_vec, r_n_bin = n_bin, r_index_factor = index_factor)
-}
-
-#' If r_max has not been given, recommend a maximum radius based on the
-#' window.
-check_or_calc_r_max <- function(r_max, min_window_side,
-                                recommended_r_max_ratio = 0.25) {
-    n_r_max <- length(r_max)
-    if (n_r_max < 1L) {
-        r_max = recommended_r_max_ratio * min_window_side
-    } else if (n_r_max != 1L || !is.finite(r_max) || r_max <= 0 ||
-               r_max > min_window_side) {
-        stop('If given, r_max should be a positive scalar between zero and',
-             ' the minimum window side length.')
-    }
-    r_max
-}
 
 #' Create an individual weight vector for each mark test function.
 #'
@@ -184,38 +162,11 @@ check_or_calc_r_max <- function(r_max, min_window_side,
 #' @return A matrix of weights. Each column is for different mark test
 #'   functions. The columns are named. Each row is for a different _ordered_
 #'   point pair where (x1, x2) is different from (x2, x1).
-diverse_weight <- function(weight_vec, mark_stat, mtf_name,
-                           one_per_lambda2) {
+specialise_weight <- function(weight_vec, mark_stat, mtf_name,
+                              one_per_lambda2) {
     mtf_coeff_vec <- sapply(mark_stat[paste(mtf_name, '_coeff', sep = '')],
                             identity)
     outer(weight_vec, mtf_coeff_vec * one_per_lambda2, '*')
-}
-
-#' Choose those marks that are within the radius.
-#' @param marks A vector containing all the marks of the point pattern in
-#'   the order of the points.
-#' @param nearby_arr_idx A logical vector that picks the points within maximum
-#'   radius. A picked mark will be picked twice to accommodate for the
-#'   ordered point pairs.
-#' @param ordering_idx An integer vector to order the picked marks in the
-#'   required order.
-#' @return A vector of only the needed marks, ordered.
-marks_within_radius <- function(marks, nearby_arr_idx, ordering_idx) {
-    mark1_mark2_m <- matrix(marks[nearby_arr_idx], ncol = 2L)
-    mark1_vec <- mark1_mark2_m[, 1, drop = TRUE]
-    mark2_vec <- mark1_mark2_m[, 2, drop = TRUE]
-    ordered_mark1_vec <- mark1_vec[ordering_idx]
-    ordered_mark2_vec <- mark2_vec[ordering_idx]
-    list(mark1 = ordered_mark1_vec, mark2 = ordered_mark2_vec)
-}
-
-#' Pick indices of separate point pairs that are within r_max of each other.
-#' @return A matrix of indices, row and column values separately.
-pairs_within_max_radius <- function(dist_m, r_max) {
-    n_point <- nrow(dist_m)
-    leq_r_max <- dist_m <= r_max
-    false_diag <- matrix(!as.logical(diag(n_point)), ncol = n_point)
-    nearby_arr_idx <- which(leq_r_max & false_diag, arr.ind = TRUE)
 }
 
 
@@ -265,13 +216,14 @@ prepare_mark_test_funcs <- function(mtf_name, mark_stat) {
 }
 
 
+
 #' Summary functions for one pattern.
 #'
 #' Uses the function \code{\link{summ_func_random_labelling}}. Eats the
 #' number of permutations the user has given and replaces it with zero.
 #' @export
-summ_func <- function(n_perm = 0L, ...) {
-    summ_func_random_labelling(n_perm = 0L, ...)
+summ_func <- function(..., n_perm = 0L) {
+    summ_func_random_labelling(..., n_perm = 0L)
 }
 
 #' Calculates summary functions for a pattern and its simulations under the
@@ -288,27 +240,7 @@ summ_func_random_labelling <-
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'mor',
                           'morAbs'),
              n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
-             method = 'permute', ...) {
-    check_pattern(pattern)
-
-    if (length(mtf_name) < 1L) {
-        stop('At least one test mark function name needs to be given.')
-    }
-
-    if (length(n_perm) != 1L || !is.finite(n_perm) || n_perm < 0L) {
-        stop('Number of permutations has to be a scalar, finite, ',
-             'non-negative number.')
-    }
-
-    if (missing(r_max)) {
-        if (missing(r_vec)) {
-            # use r_max
-        } else {
-            # use r_vec
-        }
-    } else {
-        # use r_max
-    }
+             method = 'permute', do_order_pairs = TRUE, ...) {
 
     # Check input.
     #
@@ -326,9 +258,28 @@ summ_func_random_labelling <-
     #
     # Rearrange, name results, etc. The boring stuff.
 
+   check_pattern(pattern)
+
+    if (length(mtf_name) < 1L) {
+        stop('At least one test mark function name needs to be given.')
+    }
+
+    if (length(n_perm) != 1L || !is.finite(n_perm) || n_perm < 0L) {
+        stop('Number of permutations has to be a scalar, finite, ',
+             'non-negative number.')
+    }
+
+    radius_l <- consider_radius(pattern, r_max = r_max, r_vec = r_vec,
+                                do_order_pairs = do_order_pairs)
+    r_vec <- radius_l[['r_vec']]
+    n_bin <- radius_l[['n_bin']]
+    nearby_arr_idx <- radius_l[['nearby_arr_idx']]
+    bin_idx <- radius_l[['bin_idx']]
+
     # Function that takes pattern, nearby_arr_idx, mtf_name, returns:
     # - mark_stats?
     # - mtf_func_vec
+    # - weight?
     orig_marks <- pattern[['marks']]
     orig_mark_distr_stat_l <- mark_distr_stats(orig_marks, mtf_name)
 
@@ -337,99 +288,40 @@ summ_func_random_labelling <-
     # what marks_within_radius needs: nearby_arr_idx, bin_order_idx
     # what K_f_native needs: nearby_arr_idx, bin_order_idx, n_bin, weights
 
-    # function that takes pattern, calculates dist, does r_max and comes up with the 
-#consider_radius <- function(pattern, r_max, r_vec) {
-#    # Create r_max, r_vec, n_bin, 
-#    r_max <- check_or_calc_r_max(r_max, min_window_side)
-#    r_l <- create_radius_vec(r_max, min_window_side)
-#    r_vec <- r_l[['r_vec']]
-#    r_n_bin <- r_l[['r_n_bin']]
-#    r_index_factor <- r_l[['r_index_factor']]
-#
-#
-#    dist_m <- spatstat::pairdist.ppp(pattern)
-#    # Which pairs are within r_max? Use array indices.
-#    #pair_info_l <- pairs_within_max_radius(pattern, r_max)
-#    nearby_arr_idx <- pairs_within_max_radius(dist_m, r_max)
-#    bin_idx <-
-#        round_nonneg_int(ceiling(dist_m[nearby_arr_idx] * r_index_factor) - 1)
-#}
-#
-#    # TODO: Own function, arbitrary r vec.
-#    radius_l <- create_radius_info(pattern, r_max)
-#    r_max <- radius_l[['r_max']]
-#    n_bin <- radius_l[['n_bin']]
-
-    # Create radius vector and associated information.
-    min_window_side <- with(pattern[['window']],
-                            min(diff(xrange), diff(yrange)))
-    r_max <- check_or_calc_r_max(r_max, min_window_side)
-    r_l <- create_radius_vec(r_max, min_window_side)
-    r_vec <- r_l[['r_vec']]
-    r_n_bin <- r_l[['r_n_bin']]
-    r_index_factor <- r_l[['r_index_factor']]
-
-    dist_m <- spatstat::pairdist.ppp(pattern)
-    # Which pairs are within r_max? Use array indices.
-    #pair_info_l <- pairs_within_max_radius(pattern, r_max)
-    nearby_arr_idx <- pairs_within_max_radius(dist_m, r_max)
 
     # TODO: only for interesting pairs
     edge_corr_m <- edge_corr_func(pattern)
-    weight_vec <- edge_corr_m[nearby_arr_idx]
+    edge_corr <- edge_corr_m[nearby_arr_idx]
 
-    # All in dist_m[nearby_arr_idx] are > 0 assuming a simple point pattern.
-    # FIXME: I think something is off here.
-    bin_idx <-
-        round_nonneg_int(ceiling(dist_m[nearby_arr_idx] * r_index_factor) - 1)
-    bin_order_idx <- order(bin_idx)
+    orig_mark_l <- marks_within_radius(orig_marks, nearby_arr_idx)
+    orig_mark1 <- orig_mark_l[['mark1']]
+    orig_mark2 <- orig_mark_l[['mark2']]
 
-    ordered_bin_idx <- bin_idx[bin_order_idx]
-    uniq_ordered_bin_idx <- unique(ordered_bin_idx)
-
-
-
-    orig_ordered_mark_l <- marks_within_radius(orig_marks, nearby_arr_idx,
-                                               bin_order_idx)
-    orig_ordered_mark1_vec <- orig_ordered_mark_l[['mark1']]
-    orig_ordered_mark2_vec <- orig_ordered_mark_l[['mark2']]
-
-    ordered_weight_vec <- weight_vec[bin_order_idx]
-    one_per_lambda2 <- one_per_lambda_to_two(pattern)
-    ordered_weight_m <- diverse_weight(ordered_weight_vec,
-                                       orig_mark_distr_stat_l,
+    one_per_lambda2 <- one_per_lambda_to_the_second(pattern)
+    orig_weight_m <- specialise_weight(edge_corr, orig_mark_distr_stat_l,
                                        mtf_name, one_per_lambda2)
 
     orig_mtf_func_l <- prepare_mark_test_funcs(mtf_name,
                                                orig_mark_distr_stat_l)
 
-    orig_summ_func_m <- K_f_native(orig_ordered_mark1_vec,
-                                   orig_ordered_mark2_vec,
-                                   uniq_ordered_bin_idx,
-                                   ordered_bin_idx,
-                                   ordered_weight_m,
-                                   orig_mtf_func_l,
-                                   mtf_name,
-                                   r_n_bin)
+    orig_summ_func_m <- K_f(orig_mark1, orig_mark2, bin_idx, orig_weight_m,
+                            orig_mtf_func_l, mtf_name, n_bin)
 
     if (method == 'permute') {
         sim_summ_func_a <-
             replicate(n_perm, {
                       perm_marks <- sample(orig_marks)
-                      perm_mark_list <- marks_within_radius(perm_marks,
-                                                            nearby_arr_idx,
-                                                            bin_order_idx)
-                      perm_ordered_mark1_vec <- perm_mark_list[['mark1']]
-                      perm_ordered_mark2_vec <- perm_mark_list[['mark2']]
 
-                      perm_summ_func_m <- K_f_native(perm_ordered_mark1_vec,
-                                                     perm_ordered_mark2_vec,
-                                                     uniq_ordered_bin_idx,
-                                                     ordered_bin_idx,
-                                                     ordered_weight_m,
-                                                     orig_mtf_func_l,
-                                                     mtf_name,
-                                                     r_n_bin)
+                      perm_mark_l <- marks_within_radius(perm_marks,
+                                                         nearby_arr_idx)
+                      perm_mark1_vec <- perm_mark_l[['mark1']]
+                      perm_mark2_vec <- perm_mark_l[['mark2']]
+
+                      perm_summ_func_m <- K_f(perm_mark1_vec,
+                                              perm_mark2_vec, bin_idx,
+                                              orig_weight_m,
+                                              orig_mtf_func_l, mtf_name,
+                                              n_bin)
             })
     } else {
         # TODO: Implement sampling from empirical mark distribution and
@@ -437,6 +329,12 @@ summ_func_random_labelling <-
         #       weight matrix etc. for each set of marks.
         stop('Only the method \"permute\" has been implemented thusfar.')
     }
+
+
+
+    # FIXME: This part needs work.
+
+
 
     # Combine summary functions from the original pattern and simulations.
     if (length(sim_summ_func_a) < 1L) {
@@ -479,6 +377,9 @@ summ_func_random_labelling <-
 
 #' Make sure that only the non-negative functions will get Besag's
 #' L-transform.
+#'
+#' FIXME: Consider negative marks.
+#'
 #' @param all_k_a An array containing all K_f for all patterns. Dimensions:
 #'   orig_and_perm, summ_func, r.
 all_besags_l <- function(all_k_a) {
@@ -511,36 +412,14 @@ besags_l <- function(k) {
     sqrt(1 / pi * k)
 }
 
-K_f_native <- function(...) {
-    kappa_f_m <- rho_f_native(...)
+
+
+K_f <- function(...) {
+    kappa_f_m <- rho_f(...)
     k_f_m <- apply(kappa_f_m, 2, cumsum)
     colnames(k_f_m) <- paste('K_', colnames(kappa_f_m), sep = '')
     k_f_m
 }
-
-
-
-#    require(inline)
-#    require(Rcpp)
-#
-#sum_vector_src <- '
-#    Rcpp::NumericVector value(sValue);
-#    Rcpp::IntegerVector idxVec(sIdxVec);
-#    int nBin = Rcpp::as<int>(sNBin);
-#    int nPair = value.size();
-#    Rcpp::NumericVector result(nBin);
-#
-#    //idxVec = idxVec - 1L;
-#
-#    for (int i = 0; i < nPair; ++i) {
-#        result[idxVec[i]] += value[i];
-#    }
-#    return result;
-#'
-#
-#sum_vector <- cxxfunction(signature(sValue = 'numeric', sIdxVec = 'integer',
-#                                    sNBin = 'integer'),
-#                          body = sum_vector_src, plugin = 'Rcpp')
 
 #' Sum and order the vector containing weighted mark values for each pair.
 #'
@@ -550,18 +429,15 @@ sum_vector <- function(sValue, sIdxVec, sNBin) {
     .Call("sum_vector", sValue, sIdxVec, sNBin, PACKAGE = 'marksummary')
 }
 
-
-
-rho_f_native <- function(mark1, mark2, sorted_uniq_bin_idx,
-                           sorted_bin_idx, weight, mtf_func_l,
-                           mtf_name_vec, n_bin) {
-    val_m <- sapply(seq_along(mtf_name_vec), function(mtf_idx) {
+rho_f <- function(mark1, mark2, bin_idx, weight_m, mtf_func_l, mtf_name,
+                  n_bin) {
+    val_m <- sapply(seq_along(mtf_func_l), function(mtf_idx) {
                     mtf_func <- mtf_func_l[[mtf_idx]]
 
                     # Calculate result of mark test function, weigh and sum
                     # bins together.
                     val <- mtf_func(mark1, mark2) *
-                           weight[, mtf_idx, drop = TRUE]
+                           weight_m[, mtf_idx, drop = TRUE]
 
                     #vec <- rep.int(0, n_bin)
                     #for (bin_idx in seq_along(sorted_bin_idx)) {
@@ -573,28 +449,10 @@ rho_f_native <- function(mark1, mark2, sorted_uniq_bin_idx,
                     #vec <- rep.int(0, n_bin)
                     #vec[sorted_uniq_bin_idx] <- sum_vec
 
-                    vec <- sum_vector(val, sorted_bin_idx, n_bin)
+                    vec <- sum_vector(val, bin_idx, n_bin)
 
                     vec
              })
-    colnames(val_m) <- mtf_name_vec
+    colnames(val_m) <- mtf_name
     val_m
 }
-
-## ' Returns a matrix.
-## '
-## ' @useDynLib marksummary
-#summ_func <- function(pattern,
-#                      marks,
-#                      dist_m,
-#                      weight_m,
-#                      mark_stat,
-#                      mtf_name,
-#                      r_max,
-#                      one_per_lambda2,
-#                      ...
-#                     ) {
-#    .Call('Kf', pattern[['x']], pattern[['y']], marks, dist_m, weight_m,
-#          mark_stat, mtf_name, r_max, one_per_lambda2,
-#          PACKAGE = 'marksummary')
-#}
