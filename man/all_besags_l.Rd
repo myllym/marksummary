@@ -10,6 +10,7 @@ L-transform.}
   patterns. Dimensions: orig_and_perm, summ_func, r.}
 }
 \description{
-  FIXME: Consider negative marks.
+  FIXME: Consider f-value negativity for nonnegative marks
+  and real marks separately?
 }
 

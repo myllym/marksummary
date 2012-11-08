@@ -179,7 +179,7 @@ consider_radius <- function(pattern, r_max = NULL, r_vec = NULL) {
 #'
 #' @param marks A vector containing all the marks of the point pattern in
 #'   the order of the points.
-#' @param nearby_arr_idx A logical matrix that picks the points within
+#' @param nearby_arr_idx An index matrix that picks the points within
 #'   maximum radius. A picked mark will be picked twice to accommodate for
 #'   the point pair ordering.
 #' @return A list of two mark vectors, mark1 and mark2.

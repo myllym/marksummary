@@ -15,8 +15,13 @@ Imports:
     abind,
     Rcpp,
     spatstat
+Suggests:
+    roxygen2,
+    testthat
 LinkingTo: Rcpp
 Collate:
     'marksummary-package.r'
-    'summ_func.r'
     'radius.r'
+    'mtf.r'
+    'edge-corr.r'
+    'summ-func.r'

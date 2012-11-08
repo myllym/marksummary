@@ -9,7 +9,7 @@ is smaller than the maximum radius.}
   \item{marks}{A vector containing all the marks of the
   point pattern in the order of the points.}
 
-  \item{nearby_arr_idx}{A logical matrix that picks the
+  \item{nearby_arr_idx}{An index matrix that picks the
   points within maximum radius. A picked mark will be
   picked twice to accommodate for the point pair ordering.}
 }
