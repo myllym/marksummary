@@ -5,7 +5,7 @@ hypothesis of random labelling.}
 \usage{
   summ_func_random_labelling(pattern,
     edge_correction = "translational",
-    mtf_name = c("1", "m", "mm", "gamma", "gammaAbs", "mor", "morAbs"),
+    mtf_name = c("1", "m", "mm", "gamma", "gammaAbs", "morAbs"),
     n_perm = 999L, r_max = NULL, r_vec = NULL,
     do_besags_L = TRUE, method = "permute", ...)
 }
