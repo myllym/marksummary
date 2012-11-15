@@ -11,6 +11,8 @@
 # - If suitable, add 'xyz' into the default argument of the parameter
 #   mtf_name in summ_func_random_labelling.
 
+
+
 #' Check that the given mark test function names are valid.
 check_mtf <- function(mtf_name) {
     available <- c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'mor', 'morAbs')
@@ -125,8 +127,9 @@ mark_distr_stats <- function(marks, mtf_name) {
             res[['mean']] <- mean(marks)
         }
         if (length(res[['mor_abs_scaling']]) < 1L) {
-            # == 1 / (n_mark * n_mark) * sum(marks - mean(marks))
-            res[['mor_abs_scaling']] <- n_mark * mean(marks - res[['mean']])
+            diff_abs_sum <- sum(abs(marks - res[['mean']]))
+            res[['mor_abs_scaling']] <- 1 / (n_mark * n_mark) *
+                                        (diff_abs_sum * diff_abs_sum)
         }
         res <- add_scaling_coeff(res, 'morAbs',
                                  1 / res[['mor_abs_scaling']])
@@ -142,9 +145,6 @@ mark_distr_stats <- function(marks, mtf_name) {
                                  1 / res[['gamma_abs_scaling']])
     }
 
-    if (length(res) < 1L) {
-        stop('None of the given mark test function names were recognized.')
-    }
     res
 }
 
