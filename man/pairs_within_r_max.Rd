@@ -1,13 +1,25 @@
 \name{pairs_within_r_max}
 \alias{pairs_within_r_max}
-\title{Pick indices of point pairs that are within r_max of each other.}
+\title{Pick close pairs.}
 \usage{
   pairs_within_r_max(dist_m, r_max)
+}
+\arguments{
+  \item{dist_m}{A distance matrix, e.g. from
+  \code{\link[spatstat]{pairdist}}, containing distances
+  between all points.}
+
+  \item{r_max}{Maximum radius as a scalar.}
 }
 \value{
   A matrix of indices, row and column values separately.
 }
 \description{
-  (x_i, x_i) is not considered a pair.
+  Pick indices of point pairs that are within r_max of each
+  other.
+}
+\details{
+  If close enough to each other, (x_i, x_j) and (x_j, x_i)
+  are both included as long as i != j.
 }
 

@@ -23,7 +23,8 @@
   right.
 
   If the first r_vec value is zero, the index for that
-  "bin" for the r-interval [0, 0] is never returned.
+  "bin" matching the r-interval [0, 0] should never be
+  given by the returned function.
 
   Also varying step size in r_vec is handled correctly.
 }

@@ -4,12 +4,35 @@
 \usage{
   consider_radius(pattern, r_max, r_vec)
 }
+\arguments{
+  \item{pattern}{A \code{\link[spatstat]{ppp}} object.}
+
+  \item{r_max}{The maximum radius to consider. r_vec
+  overrides r_max.}
+
+  \item{r_vec}{The radius vector to consider. r_vec
+  overrides r_max.}
+}
 \value{
   A list containing the radius vector (r_vec), the number
   of bins (n_bin), the indexing matrix to pick the point
   pairs within r_max (nearby_arr_idx) and the indices of
   the bins in which those point pairs belong to
   distance-wise (bin_idx).
+
+  Assume n is the amount of points in the point pattern and
+  p <= n, then nearby_arr_idx is an integer matrix of size
+  p x 2 and bin_idx is an integer vector of size p.
+  nearby_arr_idx can be used to index an n x n matrix
+  describing some value for each point pair OR a vector of
+  length n describing some value of each point. Using
+  nearby_arr_idx will pick p values in the former case, and
+  2 * p in the latter case.
+
+  For example, distances between all points can be stored
+  simply in an n x n matrix. The mark of each point can be
+  stored simply in a vector of length n. Use nearby_arr_idx
+  and bin_idx accordingly.
 }
 \description{
   Handle things considering the radius vector.

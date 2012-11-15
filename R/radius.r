@@ -1,9 +1,17 @@
-#' Return the length of the shorter window side.
+#' Length of the shorter window side.
+#'
+#' @param A \code{\link[spatstat]{ppp}} object that has a rectangular
+#'   window.
+#' @return A scalar value giving the length of the shorter edge of the
+#'   window.
 min_window_side_length <- function(pattern) {
     with(pattern[['window']], min(diff(xrange), diff(yrange)))
 }
 
 #' Round non-negative numbers and convert them to integers.
+#'
+#' @param x A numeric type vector with only non-negative values.
+#' @return An integer type vector with the given values rounded.
 round_nonneg_into_int <- function(x) {
     if (any(x < 0)) {
         stop('x should be non-negative.')
@@ -74,10 +82,11 @@ create_r_vec <- function(r_max, min_window_side, n_max_break = 2048L) {
 #'
 #' The bins are exclusive from left and inclusive from right.
 #'
-#' If the first r_vec value is zero, the index for that "bin" for the
-#' r-interval [0, 0] is never returned.
+#' If the first r_vec value is zero, the index for that "bin" matching the
+#' r-interval [0, 0] should never be given by the returned function.
 #'
 #' Also varying step size in r_vec is handled correctly.
+#'
 #' @param r_vec The radius vector which defines the endpoints of the bins.
 #' @return A function that turns the distance between a pair of points into
 #'   a bin index.
@@ -102,11 +111,11 @@ create_binning_func <- function(r_vec) {
             step <- steps[1]
             if (is_first_zero) {
                 binning_func <- function(pair_dist) {
-                    as.integer(ceiling(pair_dist / step))
+                    as.integer(ceiling(1 / step * pair_dist))
                 }
             } else {
                 binning_func <- function(pair_dist) {
-                    as.integer(ceiling(pair_dist / step)) - 1L
+                    as.integer(ceiling(1 / step * pair_dist)) - 1L
                 }
             }
         } else {
@@ -127,10 +136,17 @@ create_binning_func <- function(r_vec) {
     binning_func
 }
 
+#' Pick close pairs.
+#'
 #' Pick indices of point pairs that are within r_max of each other.
 #'
-#' (x_i, x_i) is not considered a pair.
+#' If close enough to each other, (x_i, x_j) and (x_j, x_i) are both
+#' included as long as i != j.
 #'
+#' @param dist_m A distance matrix, e.g. from
+#'   \code{\link[spatstat]{pairdist}}, containing distances between all
+#'   points.
+#' @param r_max Maximum radius as a scalar.
 #' @return A matrix of indices, row and column values separately.
 pairs_within_r_max <- function(dist_m, r_max) {
     n_point <- nrow(dist_m)
@@ -141,10 +157,24 @@ pairs_within_r_max <- function(dist_m, r_max) {
 
 #' Handle things considering the radius vector.
 #'
+#' @param pattern A \code{\link[spatstat]{ppp}} object.
+#' @param r_max The maximum radius to consider. r_vec overrides r_max.
+#' @param r_vec The radius vector to consider. r_vec overrides r_max.
 #' @return A list containing the radius vector (r_vec), the number of bins
-#' (n_bin), the indexing matrix to pick the point pairs within r_max
-#' (nearby_arr_idx) and the indices of the bins in which those point pairs
-#' belong to distance-wise (bin_idx).
+#'   (n_bin), the indexing matrix to pick the point pairs within r_max
+#'   (nearby_arr_idx) and the indices of the bins in which those point pairs
+#'   belong to distance-wise (bin_idx).
+#'
+#'   Assume n is the amount of points in the point pattern and p <= n, then
+#'   nearby_arr_idx is an integer matrix of size p x 2 and bin_idx is an
+#'   integer vector of size p. nearby_arr_idx can be used to index an n x n
+#'   matrix describing some value for each point pair OR a vector of length
+#'   n describing some value of each point. Using nearby_arr_idx will pick p
+#'   values in the former case, and 2 * p in the latter case.
+#'
+#'   For example, distances between all points can be stored simply in an
+#'   n x n matrix. The mark of each point can be stored simply in a vector
+#'   of length n. Use nearby_arr_idx and bin_idx accordingly.
 #' @importFrom spatstat pairdist.ppp
 consider_radius <- function(pattern, r_max, r_vec) {
     min_window_side <- min_window_side_length(pattern)
