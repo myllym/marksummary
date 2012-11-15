@@ -31,19 +31,21 @@ translational_correction <- function(window, x1, y1, x2, y2) {
 
 #' Calculate the edge correction for those point pairs that matter.
 do_edge_correction <- function(pattern, corr_name, nearby_arr_idx) {
-    window <- pattern[['window']]
-    x <- pattern[['x']]
-    y <- pattern[['y']]
-
-    first_idx <- nearby_arr_idx[, 1, drop = TRUE]
-    second_idx <- nearby_arr_idx[, 2, drop = TRUE]
-    x1 <- x[first_idx]
-    y1 <- y[first_idx]
-    x2 <- x[second_idx]
-    y2 <- y[second_idx]
-
     if (corr_name == 'translational') {
+        window <- pattern[['window']]
+        x <- pattern[['x']]
+        y <- pattern[['y']]
+
+        first_idx <- nearby_arr_idx[, 1, drop = TRUE]
+        second_idx <- nearby_arr_idx[, 2, drop = TRUE]
+        x1 <- x[first_idx]
+        y1 <- y[first_idx]
+        x2 <- x[second_idx]
+        y2 <- y[second_idx]
+
         edge_corr <- translational_correction(window, x1, y1, x2, y2)
+    } else if (corr_name == 'none') {
+        edge_corr <- rep.int(1, nrow(nearby_arr_idx))
     } else {
         stop('This edge correction has not been implemented: ', corr_name)
     }
