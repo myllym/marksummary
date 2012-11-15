@@ -146,7 +146,7 @@ pairs_within_r_max <- function(dist_m, r_max) {
 #' (nearby_arr_idx) and the indices of the bins in which those point pairs
 #' belong to distance-wise (bin_idx).
 #' @importFrom spatstat pairdist.ppp
-consider_radius <- function(pattern, r_max = NULL, r_vec = NULL) {
+consider_radius <- function(pattern, r_max, r_vec) {
     min_window_side <- min_window_side_length(pattern)
 
     if (length(r_vec) > 0L) {
@@ -163,7 +163,7 @@ consider_radius <- function(pattern, r_max = NULL, r_vec = NULL) {
     n_bin <- length(r_vec)
     binning_func <- create_binning_func(r_vec)
 
-    dist_m <- spatstat::pairdist.ppp(pattern)
+    dist_m <- pairdist.ppp(pattern)
     nearby_arr_idx <- pairs_within_r_max(dist_m, r_max)
 
     bin_idx <- binning_func(dist_m[nearby_arr_idx])
