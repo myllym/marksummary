@@ -1,9 +1,10 @@
 Package: marksummary
 Encoding: UTF-8
 Authors@R: c(
-    person(given = 'Henri', family = 'Seijo', role = 'aut',
+    person(given = 'Henri', family = 'Seijo', role = c('aut', 'cre'),
     email = 'henri.seijo@iki.fi'),
-    person(given = 'Mari', family = 'Myllymäki', role = c('cre', 'aut', 'ths'),
+    person(given = 'Mari', family = 'Myllymäki',
+           role = c('aut', 'cre', 'ths'),
     email = list('mari.myllymaki@aalto.fi', 'mari.j.myllymaki@gmail.com'))
     )
 Version: 0.1
