@@ -6,10 +6,10 @@ check_pattern <- function(pattern) {
     if (length(pattern) < 1L) {
         stop('Pattern was not given.')
     }
-    if (!spatstat::is.ppp(pattern)) {
+    if (!is.ppp(pattern)) {
         stop('The pattern must be a ppp object.')
     }
-    if (spatstat::is.empty.ppp(pattern)) {
+    if (is.empty.ppp(pattern)) {
         stop('The pattern must not be empty.')
     }
     marks <- pattern[['marks']]
@@ -96,15 +96,14 @@ summ_func <- function(..., n_perm = 0L) {
 #' @export
 summ_func_random_labelling <-
     function(pattern, edge_correction = 'translational',
-             mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'mor',
-                          'morAbs'),
+             mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
              n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
              method = 'permute', ...) {
     check_pattern(pattern)
     check_n_perm(n_perm)
 
     # Handle things related to distances of points.
-    radius_l <- consider_radius(pattern, r_max = r_max, r_vec = r_vec)
+    radius_l <- consider_radius(pattern, r_max, r_vec)
     r_vec <- radius_l[['r_vec']]
     n_bin <- radius_l[['n_bin']]
     nearby_arr_idx <- radius_l[['nearby_arr_idx']]
@@ -132,6 +131,10 @@ summ_func_random_labelling <-
     orig_summ_func_m <- K_f(orig_mark1, orig_mark2, bin_idx, orig_weight_m,
                             orig_mtf_func_l, mtf_name, n_bin)
 
+    # FIXME: K_1 gets calculated again and again. It is enough to do it for
+    # the original marks. Then remove '1' from mtf_name and add it back
+    # later for the simulations.
+
     # Simulate from the null hypothesis and estimate summary functions.
     if (method == 'permute') {
         sim_summ_func_a <-
@@ -158,7 +161,7 @@ summ_func_random_labelling <-
 
 
 
-    # FIXME: This part needs work.
+    # FIXME: This part needs cleaning up.
 
 
 
@@ -171,8 +174,8 @@ summ_func_random_labelling <-
                                   dimnames(orig_summ_func_m)[[2]],
                                   orig_and_perm = 'original'))
     } else {
-        all_summ_func_a <- abind::abind(orig_summ_func_m, sim_summ_func_a,
-                                        along = 3L)
+        all_summ_func_a <- abind(orig_summ_func_m, sim_summ_func_a,
+                                 along = 3L)
     }
 
     # After this line, the dimension order should be: orig_and_perm,
@@ -186,9 +189,11 @@ summ_func_random_labelling <-
              r = NULL)
 
     if (do_besags_L) {
-        l_summ_a <- all_besags_l(all_summ_func_a)
-        all_summ_func_a <- abind::abind(all_summ_func_a, l_summ_a,
-                                        along = 2L)
+        is_any_mark_neg <- any(orig_marks < 0)
+        is_any_mark_pos <- any(orig_marks > 0)
+        l_summ_a <- all_besags_l(all_summ_func_a, is_any_mark_neg,
+                                 is_any_mark_pos)
+        all_summ_func_a <- abind(all_summ_func_a, l_summ_a, along = 2L)
     }
 
     # Keep the names.
@@ -212,21 +217,31 @@ besags_l <- function(k) {
 #' Make sure that only the non-negative functions will get Besag's
 #' L-transform.
 #'
-#' FIXME: Consider f-value negativity for nonnegative marks and real marks separately?
-#'
 #' @param all_k_a An array containing all K_f for all patterns. Dimensions:
 #'   orig_and_perm, summ_func, r.
-all_besags_l <- function(all_k_a) {
-    available_names <- dimnames(all_k_a)[['summ_func']]
-    transformable_names <- c(
-                             'K_1',
-                             'K_m',
-                             'K_mm',
-                             'K_gamma',
-                             'K_morAbs',
-                             'K_gammaAbs'
-                            )
-    matched <- intersect(available_names, transformable_names)
+all_besags_l <- function(all_k_a, is_any_mark_neg, is_any_mark_pos) {
+    available <- dimnames(all_k_a)[['summ_func']]
+    if (is_any_mark_neg) {
+        if (is_any_mark_pos) {
+            # Positive and negative marks.
+            transformable <- c('K_1', 'K_gamma', 'K_morAbs', 'K_gammaAbs')
+        } else {
+            # Only nonpositive marks.
+            transformable <- c('K_1', 'K_mm', 'K_gamma', 'K_morAbs',
+                               'K_gammaAbs')
+        }
+    } else {
+        if (is_any_mark_pos) {
+            # Only nonnegative marks.
+            transformable <- c('K_1', 'K_m', 'K_mm', 'K_gamma', 'K_morAbs',
+                               'K_gammaAbs')
+        } else {
+            # Only zero marks. A bit silly.
+            transformable <- c('K_1', 'K_m', 'K_mm', 'K_gamma', 'K_mor',
+                               'K_morAbs', 'K_gammaAbs')
+        }
+    }
+    matched <- intersect(available, transformable)
     all_l_a <- besags_l(all_k_a[, matched, , drop = FALSE])
 
     # Create L-names.
@@ -258,7 +273,6 @@ K_f <- function(...) {
 #'
 #' @useDynLib marksummary
 weigh_and_bin <- function(f_value, weight, idx_vec, n_bin) {
-    require(Rcpp)
     .Call('weighAndBin', f_value, weight, idx_vec, n_bin,
           PACKAGE = 'marksummary')
 }
