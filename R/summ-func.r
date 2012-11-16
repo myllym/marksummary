@@ -57,9 +57,12 @@ one_per_lambda_squared <- function(pattern) {
 #'
 #' Uses the function \code{\link{summ_func_random_labelling}}. Eats the
 #' number of permutations the user has given and replaces it with zero.
+#'
+#' @return A matrix with dimensions: summ_func, r.
 #' @export
 summ_func <- function(..., n_perm = 0L) {
-    summ_func_random_labelling(..., n_perm = 0L)
+    summ_func_random_labelling(..., n_perm = 0L)['original', , ,
+                                                 drop = TRUE]
 }
 
 #' Calculates summary functions for a pattern and its simulations under the
