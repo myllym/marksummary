@@ -7,7 +7,8 @@ Authors@R: c(
     role = c('aut', 'cre', 'ths'),
     email = list('mari.myllymaki@aalto.fi', 'mari.j.myllymaki@gmail.com'))
     )
-Version: 0.1
+Version: 0.1.1
+Date: 2012-11-16
 License: GPL-3
 Title: Calculate summary functions for marked point patterns.
 Description: Calculate K_f summary functions for marked point patterns where
