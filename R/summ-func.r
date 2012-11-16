@@ -1,3 +1,207 @@
+#' Summary functions for one pattern.
+#'
+#' Uses the function \code{\link{summ_func_random_labelling}}. Eats the
+#' number of permutations the user has given and replaces it with zero.
+#'
+#' @inheritParams summ_func_random_labelling
+#' @param n_perm Ignored.
+#'
+#' @seealso summ_func_random_labelling
+#' @return A matrix with dimensions: summ_func, r.
+#' @export
+summ_func <- function(..., n_perm = 0L) {
+	res <- summ_func_random_labelling(..., n_perm = 0L)
+	res[['a']] <- res[['a']]['original', , , drop = TRUE]
+	res
+}
+
+#' Random labelling
+#'
+#' Calculates summary functions for a pattern and its simulations under the
+#' hypothesis of random labelling.
+#'
+#' @details FIXME: Add more detail for r_max and r_vec.
+#'
+#'
+#' @param pattern A \code{\link[spatstat]{ppp}} object as the simple marked
+#'   point pattern to be analysed. The marks need to be in the form of a
+#'   numeric vector. The window has to have the type "rectangle".
+#' @param edge_corr_func The edge correction to be used. Options currently
+#'   "translational" and "none".
+#' @param mtf_name A vector of mark test function names. "1" stands for the
+#'   unmarked K-function.
+#' @param n_perm The number of permutations.
+#' @param r_max A positive scalar value representing the maximum radius that
+#'   should be considered. r_vec overrides r_max. By default, r_max is NULL
+#'   and will be determined internally.
+#' @param r_vec A monotonically increasing vector of non-negative r-values
+#'   to act as the endpoints of the bins for the K_f-functions. r_vec
+#'   overrides r_max. The bins are exclusive on the left and inclusive on
+#'   the right. If the first vector element has value zero, it will be
+#'   regarded as the collapsed bin [0, 0], and the next bin will start from
+#'   and exclude 0.
+#' @param do_besags_L A boolean describing whether Besag's L-function should
+#'   also be returned where available.
+#' @param method The name of the method to create simulations under the null
+#'   hypothesis.
+#' @param ... Currently unused.
+#' @return An array containing the summary function estimates for the
+#'   original pattern and the randomly labelled patterns. Dimensions:
+#'   orig_and_perm, summ_func, r. The estimates for the original pattern are
+#'   on the row named "original".
+#' @importFrom spatstat pairdist.ppp
+#' @importFrom abind abind
+#' @export
+#'
+#' @examples
+#' require(spatstat)
+#' pp <- spruces
+#' FIXME
+#' res <- summ_func_random_labelling(pp, edge_correction="translational", mtf_name="mm", n_perm=999, do_besags_L=TRUE)
+#' plot(res, mtf_name = "mm", L=TRUE)
+#'
+summ_func_random_labelling <-
+		function(pattern, edge_correction = 'translational',
+				mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
+				n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
+				method = 'permute', ...) {
+	check_pattern(pattern)
+	check_n_perm(n_perm)
+
+	# Handle things related to distances of points.
+	radius_l <- consider_radius(pattern, r_max, r_vec)
+	r_vec <- radius_l[['r_vec']]
+	n_bin <- radius_l[['n_bin']]
+	nearby_arr_idx <- radius_l[['nearby_arr_idx']]
+	bin_idx <- radius_l[['bin_idx']]
+
+	# Handle other things related to the unmarked point pattern.
+	one_per_lambda2 <- one_per_lambda_squared(pattern)
+	edge_corr <- do_edge_correction(pattern, edge_correction,
+			nearby_arr_idx)
+
+	orig_marks <- pattern[['marks']]
+
+	# Create mark test functions and the corresponding weights for pairs.
+	mtf_l <- create_mtfs_and_weights(orig_marks, mtf_name, edge_corr,
+			one_per_lambda2)
+	orig_mtf_func_l <- mtf_l[['mtf_func_l']]
+	orig_weight_m <- mtf_l[['weight_m']]
+
+	# Pick relevant marks.
+	orig_mark_l <- marks_within_radius(orig_marks, nearby_arr_idx)
+	orig_mark1 <- orig_mark_l[['mark1']]
+	orig_mark2 <- orig_mark_l[['mark2']]
+
+	# Calculate summary function estimates.
+	orig_summ_func_m <- K_f(orig_mark1, orig_mark2, bin_idx, orig_weight_m,
+			orig_mtf_func_l, mtf_name, n_bin)
+
+	# FIXME: K_1 gets calculated again and again. It is enough to do it for
+	# the original marks. Then remove '1' from mtf_name and add it back
+	# later for the simulations.
+
+	# Simulate from the null hypothesis and estimate summary functions.
+	if (method == 'permute') {
+		sim_summ_func_a <-
+				replicate(n_perm, {
+							perm_marks <- sample(orig_marks)
+
+							perm_mark_l <- marks_within_radius(perm_marks,
+									nearby_arr_idx)
+							perm_mark1_vec <- perm_mark_l[['mark1']]
+							perm_mark2_vec <- perm_mark_l[['mark2']]
+
+							perm_summ_func_m <- K_f(perm_mark1_vec,
+									perm_mark2_vec, bin_idx,
+									orig_weight_m,
+									orig_mtf_func_l, mtf_name,
+									n_bin)
+						})
+	} else {
+		# TODO: Implement sampling from empirical mark distribution and
+		#       calculate new mark statistics, mark test functions, combined
+		#       weight matrix etc. for each set of marks.
+		stop('Only the method \"permute\" has been implemented thusfar.')
+		sim_summ_func_a <-
+				replicate(n_perm, {
+							perm_marks <- sample(orig_marks, replace=TRUE)
+
+							perm_mtf_l <- create_mtfs_and_weights(perm_marks, mtf_name, edge_corr,
+									one_per_lambda2)
+							perm_mtf_func_l <- perm_mtf_l[['mtf_func_l']]
+							perm_weight_m <- perm_mtf_l[['weight_m']]
+
+							perm_mark_l <- marks_within_radius(perm_marks,
+									nearby_arr_idx)
+							perm_mark1_vec <- perm_mark_l[['mark1']]
+							perm_mark2_vec <- perm_mark_l[['mark2']]
+
+							perm_summ_func_m <- K_f(perm_mark1_vec,
+									perm_mark2_vec, bin_idx,
+									perm_weight_m,
+									perm_mtf_func_l, mtf_name,
+									n_bin)
+						})
+	}
+
+
+
+	# FIXME: This part needs cleaning up.
+
+
+
+	# Combine summary functions from the original pattern and simulations.
+	if (length(sim_summ_func_a) < 1L) {
+		all_summ_func_a <-
+				array(orig_summ_func_m, c(dim(orig_summ_func_m), 1L),
+						dimnames = list(r = NULL,
+								summ_func =
+										dimnames(orig_summ_func_m)[[2]],
+								orig_and_perm = 'original'))
+	} else {
+		all_summ_func_a <- abind(orig_summ_func_m, sim_summ_func_a,
+				along = 3L)
+	}
+
+	# After this line, the dimension order should be: orig_and_perm,
+	# summ_func, r.
+	all_summ_func_a <- aperm(all_summ_func_a, c(3L, 2L, 1L))
+
+	# Keep the names.
+	dimnames(all_summ_func_a) <-
+			list(orig_and_perm = c('original', rep.int('', n_perm)),
+					summ_func = dimnames(all_summ_func_a)[[2]],
+					r = NULL)
+
+	if (do_besags_L) {
+		is_any_mark_neg <- any(orig_marks < 0)
+		is_any_mark_pos <- any(orig_marks > 0)
+		l_summ_a <- all_besags_l(all_summ_func_a, is_any_mark_neg,
+				is_any_mark_pos)
+		all_summ_func_a <- abind(all_summ_func_a, l_summ_a, along = 2L)
+	}
+
+	# Keep the names.
+	# FIXME: Remove the silly repetition. The K_f names have to exist before
+	#        Besag's L. Before returning all names have to be in order.
+	dimnames(all_summ_func_a) <-
+			list(orig_and_perm = c('original', rep.int('', n_perm)),
+					summ_func = dimnames(all_summ_func_a)[[2]],
+					r = NULL)
+
+	res <- list(r = r_vec, a = all_summ_func_a, call=match.call())
+	class(res) <- "all_summ_func_rl"
+	res
+}
+
+plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL, ncol = NULL, ...) {
+	# FIXME
+	# Make a data frame according to the arguments, i.e. choose which functions to plot.
+	# Plot using ggplot.
+}
+
+
 #' Checks that the given pattern is valid.
 #'
 #' @importFrom spatstat is.ppp
@@ -53,165 +257,6 @@ one_per_lambda_squared <- function(pattern) {
     one_per_lambda2 <- area * area / (n_point * (n_point - 1L))
 }
 
-#' Summary functions for one pattern.
-#'
-#' Uses the function \code{\link{summ_func_random_labelling}}. Eats the
-#' number of permutations the user has given and replaces it with zero.
-#'
-#' @seealso summ_func_random_labelling
-#' @return A matrix with dimensions: summ_func, r.
-#' @export
-summ_func <- function(..., n_perm = 0L) {
-    res <- summ_func_random_labelling(..., n_perm = 0L)
-    res[['a']] <- res[['a']]['original', , , drop = TRUE]
-    res
-}
-
-#' Calculates summary functions for a pattern and its simulations under the
-#' hypothesis of random labelling.
-#'
-#' @param pattern A \code{\link[spatstat]{ppp}} object as the simple marked
-#'   point pattern to be analysed. The marks need to be in the form of a
-#'   numeric vector. The window has to have the type "rectangle".
-#' @param edge_corr_func The edge correction function to be used. The
-#'   function will be fed with the pattern object.
-#' @param mtf_name A vector of mark test function names. "1" stands for the
-#'   unmarked K-function.
-#' @param n_perm The number of permutations.
-#' @param r_max A positive scalar value representing the maximum radius that
-#'   should be considered. r_vec overrides r_max. By default, r_max is NULL
-#'   and will be determined internally.
-#' @param r_vec A monotonically increasing vector of non-negative r-values
-#'   to act as the endpoints of the bins for the K_f-functions. r_vec
-#'   overrides r_max. The bins are exclusive on the left and inclusive on
-#'   the right. If the first vector element has value zero, it will be
-#'   regarded as the collapsed bin [0, 0], and the next bin will start from
-#'   and exclude 0.
-#' @param do_besags_L A boolean describing whether Besag's L-function should
-#'   also be returned where available.
-#' @param method The name of the method to create simulations under the null
-#'   hypothesis.
-#' @param ... Currently unused.
-#' @return An array containing the summary function estimates for the
-#'   original pattern and the randomly labelled patterns. Dimensions:
-#'   orig_and_perm, summ_func, r. The estimates for the original pattern are
-#'   on the row named "original".
-#' @importFrom spatstat pairdist.ppp
-#' @importFrom abind abind
-#' @export
-summ_func_random_labelling <-
-    function(pattern, edge_correction = 'translational',
-             mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
-             n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
-             method = 'permute', ...) {
-    check_pattern(pattern)
-    check_n_perm(n_perm)
-
-    # Handle things related to distances of points.
-    radius_l <- consider_radius(pattern, r_max, r_vec)
-    r_vec <- radius_l[['r_vec']]
-    n_bin <- radius_l[['n_bin']]
-    nearby_arr_idx <- radius_l[['nearby_arr_idx']]
-    bin_idx <- radius_l[['bin_idx']]
-
-    # Handle other things related to the unmarked point pattern.
-    one_per_lambda2 <- one_per_lambda_squared(pattern)
-    edge_corr <- do_edge_correction(pattern, edge_correction,
-                                    nearby_arr_idx)
-
-    orig_marks <- pattern[['marks']]
-
-    # Create mark test functions and the corresponding weights for pairs.
-    mtf_l <- create_mtfs_and_weights(orig_marks, mtf_name, edge_corr,
-                                     one_per_lambda2)
-    orig_mtf_func_l <- mtf_l[['mtf_func_l']]
-    orig_weight_m <- mtf_l[['weight_m']]
-
-    # Pick relevant marks.
-    orig_mark_l <- marks_within_radius(orig_marks, nearby_arr_idx)
-    orig_mark1 <- orig_mark_l[['mark1']]
-    orig_mark2 <- orig_mark_l[['mark2']]
-
-    # Calculate summary function estimates.
-    orig_summ_func_m <- K_f(orig_mark1, orig_mark2, bin_idx, orig_weight_m,
-                            orig_mtf_func_l, mtf_name, n_bin)
-
-    # FIXME: K_1 gets calculated again and again. It is enough to do it for
-    # the original marks. Then remove '1' from mtf_name and add it back
-    # later for the simulations.
-
-    # Simulate from the null hypothesis and estimate summary functions.
-    if (method == 'permute') {
-        sim_summ_func_a <-
-            replicate(n_perm, {
-                      perm_marks <- sample(orig_marks)
-
-                      perm_mark_l <- marks_within_radius(perm_marks,
-                                                         nearby_arr_idx)
-                      perm_mark1_vec <- perm_mark_l[['mark1']]
-                      perm_mark2_vec <- perm_mark_l[['mark2']]
-
-                      perm_summ_func_m <- K_f(perm_mark1_vec,
-                                              perm_mark2_vec, bin_idx,
-                                              orig_weight_m,
-                                              orig_mtf_func_l, mtf_name,
-                                              n_bin)
-            })
-    } else {
-        # TODO: Implement sampling from empirical mark distribution and
-        #       calculate new mark statistics, mark test functions, combined
-        #       weight matrix etc. for each set of marks.
-        stop('Only the method \"permute\" has been implemented thusfar.')
-    }
-
-
-
-    # FIXME: This part needs cleaning up.
-
-
-
-    # Combine summary functions from the original pattern and simulations.
-    if (length(sim_summ_func_a) < 1L) {
-        all_summ_func_a <-
-            array(orig_summ_func_m, c(dim(orig_summ_func_m), 1L),
-                  dimnames = list(r = NULL,
-                                  summ_func =
-                                  dimnames(orig_summ_func_m)[[2]],
-                                  orig_and_perm = 'original'))
-    } else {
-        all_summ_func_a <- abind(orig_summ_func_m, sim_summ_func_a,
-                                 along = 3L)
-    }
-
-    # After this line, the dimension order should be: orig_and_perm,
-    # summ_func, r.
-    all_summ_func_a <- aperm(all_summ_func_a, c(3L, 2L, 1L))
-
-    # Keep the names.
-    dimnames(all_summ_func_a) <-
-        list(orig_and_perm = c('original', rep.int('', n_perm)),
-             summ_func = dimnames(all_summ_func_a)[[2]],
-             r = NULL)
-
-    if (do_besags_L) {
-        is_any_mark_neg <- any(orig_marks < 0)
-        is_any_mark_pos <- any(orig_marks > 0)
-        l_summ_a <- all_besags_l(all_summ_func_a, is_any_mark_neg,
-                                 is_any_mark_pos)
-        all_summ_func_a <- abind(all_summ_func_a, l_summ_a, along = 2L)
-    }
-
-    # Keep the names.
-    # FIXME: Remove the silly repetition. The K_f names have to exist before
-    #        Besag's L. Before returning all names have to be in order.
-    dimnames(all_summ_func_a) <-
-        list(orig_and_perm = c('original', rep.int('', n_perm)),
-             summ_func = dimnames(all_summ_func_a)[[2]],
-             r = NULL)
-
-    list(r = r_vec, a = all_summ_func_a)
-}
-
 
 
 #' Besag's L-transform.
@@ -219,7 +264,7 @@ besags_l <- function(k) {
     sqrt(1 / pi * k)
 }
 
-#' Make sure that only the non-negative functions will get Besag's
+#' FIXME Make sure that only the non-negative functions will get Besag's
 #' L-transform.
 #'
 #' @param all_k_a An array containing all K_f for all patterns. Dimensions:
@@ -261,8 +306,6 @@ all_besags_l <- function(all_k_a, is_any_mark_neg, is_any_mark_pos) {
     all_l_a
 }
 
-
-
 #' Calculates the cumulated K_f-estimates.
 K_f <- function(...) {
     kappa_f_m <- rho_f(...)
@@ -283,6 +326,7 @@ weigh_and_bin <- function(f_value, weight, idx_vec, n_bin) {
 }
 
 #' Calculates the uncumulated rho_f-estimates.
+#' FIXME params
 rho_f <- function(mark1, mark2, bin_idx, weight_m, mtf_func_l, mtf_name,
                   n_bin) {
     val_m <- sapply(seq_along(mtf_func_l), function(mtf_idx) {
