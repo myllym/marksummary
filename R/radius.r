@@ -186,7 +186,7 @@ consider_radius <- function(pattern, r_max, r_vec) {
         if (length(r_max) < 1L) {
             r_max <- create_r_max(min_window_side)
         } else {
-            check_r_max(r_max)
+            check_r_max(r_max, min_window_side)
         }
         r_vec <- create_r_vec(r_max, min_window_side)
     }
