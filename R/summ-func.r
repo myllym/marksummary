@@ -45,10 +45,10 @@ check_n_perm <- function(n_perm) {
 #' Notice that this estimator is biased.
 #'
 #' @importFrom spatstat area.owin
-one_per_lambda_squared <- function(pattern, biased = FALSE) {
+one_per_lambda_squared <- function(pattern, use_biased = FALSE) {
     area <- area.owin(pattern[['window']])
     n_point <- pattern[['n']]
-    if (biased) {
+    if (use_biased) {
         one_per_lambda2 <- area * area / (n_point * n_point)
     } else {
         one_per_lambda2 <- area * area / (n_point * (n_point - 1L))
