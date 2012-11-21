@@ -30,6 +30,14 @@ translational_correction <- function(window, x1, y1, x2, y2) {
 }
 
 #' Calculate the edge correction for those point pairs that matter.
+#' @param pattern A \code{\link[spatstat]{ppp}} object from which the point
+#'   pairs will be picked.
+#' @param corr_name The name of the edge correction. Options are 'translate'
+#'   and 'none'.
+#' @param nearby_arr_idx An array index matrix with two columns. This
+#'   decides for which point pairs an edge correction is calculated.
+#' @return A vector of edge correction coefficients for each point pair
+#'   picked by nearby_arr_idx.
 do_edge_correction <- function(pattern, corr_name, nearby_arr_idx) {
     if (corr_name == 'translate') {
         window <- pattern[['window']]
