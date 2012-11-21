@@ -1,4 +1,4 @@
-#' Translational edge-correction.
+#' Translational edge-correction
 #'
 #' Calculates a vector of edge correction weights for given point pairs
 #' using the translational edge-correction. Notice that the inverse has
@@ -31,7 +31,7 @@ translational_correction <- function(window, x1, y1, x2, y2) {
 
 #' Calculate the edge correction for those point pairs that matter.
 do_edge_correction <- function(pattern, corr_name, nearby_arr_idx) {
-    if (corr_name == 'translational') {
+    if (corr_name == 'translate') {
         window <- pattern[['window']]
         x <- pattern[['x']]
         y <- pattern[['y']]

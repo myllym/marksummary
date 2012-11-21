@@ -76,8 +76,8 @@ summ_func <- function(..., n_perm = 0L) {
 #' @param pattern A \code{\link[spatstat]{ppp}} object as the simple marked
 #'   point pattern to be analysed. The marks need to be in the form of a
 #'   numeric vector. The window has to have the type "rectangle".
-#' @param edge_corr_func The edge correction function to be used. The
-#'   function will be fed with the pattern object.
+#' @param edge_corr_func The name of the edge correction to be used. Options
+#'   are 'translate' and 'none'.
 #' @param mtf_name A vector of mark test function names. "1" stands for the
 #'   unmarked K-function.
 #' @param n_perm The number of permutations.
@@ -103,7 +103,7 @@ summ_func <- function(..., n_perm = 0L) {
 #' @importFrom abind abind
 #' @export
 summ_func_random_labelling <-
-    function(pattern, edge_correction = 'translational',
+    function(pattern, edge_correction = 'translate',
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
              n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
              method = 'permute', ...) {
