@@ -269,10 +269,16 @@ all_besags_l <- function(all_k_a, is_any_mark_neg, is_any_mark_pos) {
 
 #' Calculates the cumulated K_f-estimates.
 K_f <- function(...) {
-    kappa_f_m <- rho_f(...)
-    k_f_m <- apply(kappa_f_m, 2, cumsum)
-    colnames(k_f_m) <- paste('K_', colnames(kappa_f_m), sep = '')
-    k_f_m
+    rho_f_m <- rho_f(...)
+    # as.matrix is needed if rho_f_m has only one r-value.
+    n_r <- nrow(rho_f_m)
+    K_f_m <- as.matrix(apply(rho_f_m, 2, cumsum), nrow = n_r)
+    if (n_r == 1L) {
+        # apply flips the matrix over if there is only one r-value.
+        K_f_m <- t(K_f_m)
+    }
+    colnames(K_f_m) <- paste('K_', colnames(rho_f_m), sep = '')
+    K_f_m
 }
 
 #' Weigh and sum into bins.
@@ -296,16 +302,21 @@ weigh_and_bin <- function(f_value, weight, idx_vec, n_bin) {
 #' Calculates the uncumulated rho_f-estimates.
 rho_f <- function(mark1, mark2, bin_idx, weight_m, mtf_func_l, mtf_name,
                   n_bin) {
-    val_m <- sapply(seq_along(mtf_func_l), function(mtf_idx) {
-                    mtf_func <- mtf_func_l[[mtf_idx]]
-
-                    f_value <- mtf_func(mark1, mark2)
-                    rho <- weigh_and_bin(f_value,
-                                         weight_m[, mtf_idx, drop = TRUE],
-                                         bin_idx, n_bin)
-
-                    rho
-             })
+    val_m <- as.matrix(vapply(seq_along(mtf_func_l),
+                  function(mtf_idx) {
+                      mtf_func <- mtf_func_l[[mtf_idx]]
+                      f_value <- mtf_func(mark1, mark2)
+                      one_rho_f <-
+                          weigh_and_bin(f_value,
+                                        weight_m[, mtf_idx, drop = TRUE],
+                                        bin_idx, n_bin)
+                      one_rho_f
+                  }, numeric(n_bin)))
+    # vapply acts differently depending on whether the result is a vector or
+    # a scalar.
+    if (n_bin == 1L) {
+        val_m <- t(val_m)
+    }
     colnames(val_m) <- mtf_name
     val_m
 }
