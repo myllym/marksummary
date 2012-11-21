@@ -83,7 +83,7 @@ summ_func <- function(..., n_perm = 0L) {
 #' @param n_perm The number of permutations.
 #' @param r_max A positive scalar value representing the maximum radius that
 #'   should be considered. r_vec overrides r_max. By default, r_max is NULL
-#'   and will be determined internally.
+#'   and will get a sensible default.
 #' @param r_vec A monotonically increasing vector of non-negative r-values
 #'   to act as the endpoints of the bins for the K_f-functions. r_vec
 #'   overrides r_max. The bins are exclusive on the left and inclusive on
@@ -97,8 +97,8 @@ summ_func <- function(..., n_perm = 0L) {
 #' @param ... Currently unused.
 #' @return An array containing the summary function estimates for the
 #'   original pattern and the randomly labelled patterns. Dimensions:
-#'   orig_and_perm, summ_func, r. The estimates for the original pattern are
-#'   on the row named "original".
+#'   orig_and_perm, summ_func, r. The estimates for the given marked point
+#'   pattern are on the row named "original".
 #' @importFrom spatstat pairdist.ppp
 #' @importFrom abind abind
 #' @export
