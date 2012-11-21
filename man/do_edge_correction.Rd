@@ -4,6 +4,21 @@
 \usage{
   do_edge_correction(pattern, corr_name, nearby_arr_idx)
 }
+\arguments{
+  \item{pattern}{A \code{\link[spatstat]{ppp}} object from
+  which the point pairs will be picked.}
+
+  \item{corr_name}{The name of the edge correction. Options
+  are 'translate' and 'none'.}
+
+  \item{nearby_arr_idx}{An array index matrix with two
+  columns. This decides for which point pairs an edge
+  correction is calculated.}
+}
+\value{
+  A vector of edge correction coefficients for each point
+  pair picked by nearby_arr_idx.
+}
 \description{
   Calculate the edge correction for those point pairs that
   matter.

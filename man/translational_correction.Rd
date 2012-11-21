@@ -1,6 +1,6 @@
 \name{translational_correction}
 \alias{translational_correction}
-\title{Translational edge-correction.}
+\title{Translational edge-correction}
 \usage{
   translational_correction(window, x1, y1, x2, y2)
 }

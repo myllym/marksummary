@@ -4,7 +4,7 @@
 hypothesis of random labelling.}
 \usage{
   summ_func_random_labelling(pattern,
-    edge_correction = "translational",
+    edge_correction = "translate",
     mtf_name = c("1", "m", "mm", "gamma", "gammaAbs", "morAbs"),
     n_perm = 999L, r_max = NULL, r_vec = NULL,
     do_besags_L = TRUE, method = "permute", ...)
@@ -15,8 +15,8 @@ hypothesis of random labelling.}
   need to be in the form of a numeric vector. The window
   has to have the type "rectangle".}
 
-  \item{edge_corr_func}{The edge correction function to be
-  used. The function will be fed with the pattern object.}
+  \item{edge_corr_func}{The name of the edge correction to
+  be used. Options are 'translate' and 'none'.}
 
   \item{mtf_name}{A vector of mark test function names. "1"
   stands for the unmarked K-function.}
@@ -25,8 +25,8 @@ hypothesis of random labelling.}
 
   \item{r_max}{A positive scalar value representing the
   maximum radius that should be considered. r_vec overrides
-  r_max. By default, r_max is NULL and will be determined
-  internally.}
+  r_max. By default, r_max is NULL and will get a sensible
+  default.}
 
   \item{r_vec}{A monotonically increasing vector of
   non-negative r-values to act as the endpoints of the bins
@@ -48,7 +48,8 @@ hypothesis of random labelling.}
   An array containing the summary function estimates for
   the original pattern and the randomly labelled patterns.
   Dimensions: orig_and_perm, summ_func, r. The estimates
-  for the original pattern are on the row named "original".
+  for the given marked point pattern are on the row named
+  "original".
 }
 \description{
   Calculates summary functions for a pattern and its
