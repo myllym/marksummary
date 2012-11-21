@@ -140,8 +140,9 @@ summ_func_random_labelling <-
                             orig_mtf_func_l, mtf_name, n_bin)
 
     # FIXME: K_1 gets calculated again and again. It is enough to do it for
-    # the original marks. Then remove '1' from mtf_name and add it back
-    # later for the simulations.
+    # the original marks. Then remove '1' from mtf_name, orig_weight_m,
+    # orig_mtf_func_l and add K_1 and possibly L_1 back later for the
+    # simulations.
 
     # Simulate from the null hypothesis and estimate summary functions.
     if (method == 'permute') {
