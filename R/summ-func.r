@@ -228,48 +228,38 @@ summ_func_random_labelling <-
 
 
 #' Besag's L-transform.
-besags_l <- function(k) {
+besags_L <- function(k) {
     sqrt(1 / pi * k)
 }
 
-#' Make sure that only the non-negative functions will get Besag's
-#' L-transform.
+#' Channel to Besag's L.
+#'
+#' Pick only those K_f that have a valid Besag's L-transform and return the
+#' transformed summary functions.
 #'
 #' @param all_k_a An array containing all K_f for all patterns. Dimensions:
 #'   orig_and_perm, summ_func, r.
-all_besags_l <- function(all_k_a, is_any_mark_neg, is_any_mark_pos) {
-    available <- dimnames(all_k_a)[['summ_func']]
-    if (is_any_mark_neg) {
-        if (is_any_mark_pos) {
-            # Positive and negative marks.
-            transformable <- c('K_1', 'K_gamma', 'K_morAbs', 'K_gammaAbs')
-        } else {
-            # Only nonpositive marks.
-            transformable <- c('K_1', 'K_mm', 'K_gamma', 'K_morAbs',
-                               'K_gammaAbs')
-        }
-    } else {
-        if (is_any_mark_pos) {
-            # Only nonnegative marks.
-            transformable <- c('K_1', 'K_m', 'K_mm', 'K_gamma', 'K_morAbs',
-                               'K_gammaAbs')
-        } else {
-            # Only zero marks. A bit silly.
-            transformable <- c('K_1', 'K_m', 'K_mm', 'K_gamma', 'K_mor',
-                               'K_morAbs', 'K_gammaAbs')
-        }
-    }
-    matched <- intersect(available, transformable)
-    all_l_a <- besags_l(all_k_a[, matched, , drop = FALSE])
+#' @return An array of dimensions: orig_and_perm, summ_func, r. The size of
+#'   the second dimension depends on how many K_f functions had a valid
+#'   L-transform.
+all_besags_L <- function(all_k_a, is_any_mark_neg, is_any_mark_pos,
+                         sep_char = '_', L_char = 'L') {
+    K_f_name <- dimnames(all_k_a)[['summ_func']]
+    # First row of sapply result is all 'K', second row mtf.
+    mtf_name <- sapply(strsplit(K_f_name, sep_char, fixed=TRUE),
+                       identity)[2, , drop = TRUE]
+    valid_mtf_name <- besags_L_valid(mtf_name,
+                                     is_any_mark_neg = is_any_mark_neg,
+                                     is_any_mark_pos = is_any_mark_pos)
+    match.idx <- match(valid_mtf_name, mtf_name)
 
-    # Create L-names.
-    # First row 'K', second row mtf.
-    split_name_m <- matrix(sapply(strsplit(matched, '_', fixed = TRUE),
-                                  identity),
-                           ncol = length(matched))
-    split_name_m[1, ] <- 'L'
-    l_names <- apply(split_name_m, 2, paste, collapse = '_')
-    dimnames(all_l_a)[2] <- list(summ_func = l_names)
+    if (length(match.idx) < 1L) {
+        all_l_a <- NULL
+    } else {
+        all_l_a <- besags_L(all_k_a[, match.idx, , drop = FALSE])
+        L_f_name <- paste(L_char, mtf_name, sep = sep_char)
+        dimnames(all_l_a)[2] <- list(summ_func = L_f_name)
+    }
 
     all_l_a
 }

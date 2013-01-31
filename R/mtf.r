@@ -200,3 +200,56 @@ create_mtfs_and_weights <- function(marks, mtf_name, edge_corr,
 
     list(mtf_func_l = mtf_func_l, weight_m = weight_m)
 }
+
+
+
+#' Is L-transform valid?
+#'
+#' Ask for which mark test functions Besag's L-transformation can be done
+#' given a mark distribution.
+#'
+#' Given names of mark test functions and information on the (one-point)
+#' mark distribution, returns the names of those mark test functions which
+#' have a valid Besag's L-transform for the specified mark distribution.
+#'
+#' @inheritParams summ_func_random_labelling
+#' @param is_any_mark_neg A logical scalar value describing whether any of
+#'   the marks in the mark distribution have a negative value.
+#' @param is_any_mark_pos A logical scalar value describing whether any of
+#'   the marks in the mark distribution have a positive value.
+#' @return A vector of the names of those mark test function names which
+#'   have a valid Besag's L-transform. The names will be in the same order
+#'   as they appear in mtf_name.
+#' @export
+besags_L_valid <- function(mtf_name, is_any_mark_neg, is_any_mark_pos) {
+    check_mtf(mtf_name)
+
+    if (length(is_any_mark_neg) != 1L || !is.logical(is_any_mark_neg)) {
+        stop('is_any_mark_neg must be a logical scalar vector.')
+    }
+    if (length(is_any_mark_pos) != 1L || !is.logical(is_any_mark_pos)) {
+        stop('is_any_mark_pos must be a logical scalar vector.')
+    }
+
+    if (is_any_mark_neg) {
+        if (is_any_mark_pos) {
+            # Positive and negative marks.
+            transformable <- c('1', 'gamma', 'morAbs', 'gammaAbs')
+        } else {
+            # Only nonpositive marks.
+            transformable <- c('1', 'mm', 'gamma', 'morAbs', 'gammaAbs')
+        }
+    } else {
+        if (is_any_mark_pos) {
+            # Only nonnegative marks.
+            transformable <- c('1', 'm', 'mm', 'gamma', 'morAbs',
+                               'gammaAbs')
+        } else {
+            # Only zero marks. A bit silly.
+            transformable <- c('1', 'm', 'mm', 'gamma', 'mor', 'morAbs',
+                               'gammaAbs')
+        }
+    }
+
+    intersect(mtf_name, transformable)
+}
