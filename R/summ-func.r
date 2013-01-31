@@ -45,10 +45,16 @@ check_n_perm <- function(n_perm) {
 #' Notice that this estimator is biased.
 #'
 #' @importFrom spatstat area.owin
-one_per_lambda_squared <- function(pattern, use_biased = FALSE) {
+one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
+    if (length(use_biased_lambda2) != 1L ||
+        !is.logical(use_biased_lambda2) ||
+        !is.finite(use_biased_lambda2)) {
+        stop('use_biased_lambda2 must be either TRUE or FALSE.')
+    }
+
     area <- area.owin(pattern[['window']])
     n_point <- pattern[['n']]
-    if (use_biased) {
+    if (use_biased_lambda2) {
         one_per_lambda2 <- area * area / (n_point * n_point)
     } else {
         one_per_lambda2 <- area * area / (n_point * (n_point - 1L))
@@ -106,7 +112,7 @@ summ_func_random_labelling <-
     function(pattern, edge_correction = 'translate',
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
              n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
-             method = 'permute', ...) {
+             method = 'permute', use_biased_lambda2 = FALSE, ...) {
     check_pattern(pattern)
     check_n_perm(n_perm)
 
@@ -118,7 +124,9 @@ summ_func_random_labelling <-
     bin_idx <- radius_l[['bin_idx']]
 
     # Handle other things related to the unmarked point pattern.
-    one_per_lambda2 <- one_per_lambda_squared(pattern)
+    one_per_lambda2 <-
+        one_per_lambda_squared(pattern,
+                               use_biased_lambda2 = use_biased_lambda2)
     edge_corr <- do_edge_correction(pattern, edge_correction,
                                     nearby_arr_idx)
 
