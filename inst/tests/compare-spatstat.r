@@ -13,9 +13,9 @@ test_own_and_spatstat <- function(pattern, edge_correction, do_besags_L,
                          r_vec = r_vec)
     our_r <- our_res[['r']]
     our_a <- our_res[['a']]
-    our_K <- our_a['K_1', , drop=TRUE]
+    our_K <- our_a['K_1', , drop = TRUE]
     if (do_besags_L) {
-        our_L <- our_a['L_1', , drop=TRUE]
+        our_L <- our_a['L_1', , drop = TRUE]
     }
 
     sp_K_res <- spatstat::Kest(pattern, r = r_vec,
@@ -60,7 +60,7 @@ test_that('spruces; r, K and L; default radius vector', {
 
 test_that('spruces; r, K and L; given radius vector', {
     pattern <- spatstat::spruces
-    r_vec <- seq(0, 9, by = 1)
+    r_vec <- seq(0, 9, length.out = 1e1L)
     test_own_and_spatstat(pattern, edge_correction = 'translate',
                           do_besags_L = TRUE, r_vec = r_vec)
 })
