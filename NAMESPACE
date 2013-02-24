@@ -1,6 +1,8 @@
+export(besags_L_valid)
 export(summ_func)
 export(summ_func_random_labelling)
 importFrom(abind,abind)
+importFrom(abind,adrop)
 importFrom(spatstat,area.owin)
 importFrom(spatstat,is.empty.ppp)
 importFrom(spatstat,is.ppp)

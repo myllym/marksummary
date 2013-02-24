@@ -1,0 +1,21 @@
+\name{all_besags_L}
+\alias{all_besags_L}
+\title{Channel to Besag's L.}
+\usage{
+  all_besags_L(all_k_a, is_any_mark_neg, is_any_mark_pos,
+    sep_char = "_", L_char = "L")
+}
+\arguments{
+  \item{all_k_a}{An array containing all K_f for all
+  patterns. Dimensions: orig_and_perm, summ_func, r.}
+}
+\value{
+  An array of dimensions: orig_and_perm, summ_func, r. The
+  size of the second dimension depends on how many K_f
+  functions had a valid L-transform.
+}
+\description{
+  Pick only those K_f that have a valid Besag's L-transform
+  and return the transformed summary functions.
+}
+

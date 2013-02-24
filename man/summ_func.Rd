@@ -4,6 +4,11 @@
 \usage{
   summ_func(..., n_perm = 0L)
 }
+\arguments{
+  \item{n_perm}{Ignored.}
+
+  \item{...}{Currently unused.}
+}
 \value{
   A matrix with dimensions: summ_func, r.
 }

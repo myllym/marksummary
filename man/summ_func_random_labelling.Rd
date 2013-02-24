@@ -1,13 +1,13 @@
 \name{summ_func_random_labelling}
 \alias{summ_func_random_labelling}
-\title{Calculates summary functions for a pattern and its simulations under the
-hypothesis of random labelling.}
+\title{Summary functions for random labelling}
 \usage{
   summ_func_random_labelling(pattern,
     edge_correction = "translate",
     mtf_name = c("1", "m", "mm", "gamma", "gammaAbs", "morAbs"),
     n_perm = 999L, r_max = NULL, r_vec = NULL,
-    do_besags_L = TRUE, method = "permute", ...)
+    do_besags_L = TRUE, method = "permute",
+    use_biased_lambda2 = FALSE, ...)
 }
 \arguments{
   \item{pattern}{A \code{\link[spatstat]{ppp}} object as
@@ -19,7 +19,8 @@ hypothesis of random labelling.}
   be used. Options are 'translate' and 'none'.}
 
   \item{mtf_name}{A vector of mark test function names. "1"
-  stands for the unmarked K-function.}
+  stands for the unmarked K-function. Accepted values are
+  '1', 'm', 'mm', 'gamma', 'gammaAbs' and 'morAbs'.}
 
   \item{n_perm}{The number of permutations.}
 
@@ -39,16 +40,21 @@ hypothesis of random labelling.}
   \item{do_besags_L}{A boolean describing whether Besag's
   L-function should also be returned where available.}
 
+  \item{use_biased_lambda2}{A logical scalar on whether to
+  use the biased or the unbiased (in the Poisson case)
+  estimate of the intensity squared.}
+
   \item{method}{The name of the method to create
   simulations under the null hypothesis.}
 
   \item{...}{Currently unused.}
 }
 \value{
-  An array containing the summary function estimates for
-  the original pattern and the randomly labelled patterns.
-  Dimensions: orig_and_perm, summ_func, r. The estimates
-  for the given marked point pattern are on the row named
+  A list containing the radius vector (r) and an array (a)
+  containing the summary function estimates for the
+  original pattern and the randomly labelled patterns with
+  dimensions orig_and_perm, summ_func, r. The estimates for
+  the given marked point pattern are on the row named
   "original".
 }
 \description{
