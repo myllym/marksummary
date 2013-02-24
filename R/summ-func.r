@@ -68,6 +68,8 @@ one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
 #' number of permutations the user has given and replaces it with zero.
 #'
 #' @seealso summ_func_random_labelling
+#' @inheritParams summ_func_random_labelling
+#' @param n_perm Ignored.
 #' @return A matrix with dimensions: summ_func, r.
 #' @importFrom abind adrop
 #' @export
@@ -78,6 +80,8 @@ summ_func <- function(..., n_perm = 0L) {
     res
 }
 
+#' Summary functions for random labelling
+#'
 #' Calculates summary functions for a pattern and its simulations under the
 #' hypothesis of random labelling.
 #'
@@ -87,7 +91,8 @@ summ_func <- function(..., n_perm = 0L) {
 #' @param edge_corr_func The name of the edge correction to be used. Options
 #'   are 'translate' and 'none'.
 #' @param mtf_name A vector of mark test function names. "1" stands for the
-#'   unmarked K-function.
+#'   unmarked K-function. Accepted values are '1', 'm', 'mm', 'gamma',
+#'   'gammaAbs' and 'morAbs'.
 #' @param n_perm The number of permutations.
 #' @param r_max A positive scalar value representing the maximum radius that
 #'   should be considered. r_vec overrides r_max. By default, r_max is NULL
@@ -100,13 +105,17 @@ summ_func <- function(..., n_perm = 0L) {
 #'   and exclude 0.
 #' @param do_besags_L A boolean describing whether Besag's L-function should
 #'   also be returned where available.
+#' @param use_biased_lambda2 A logical scalar on whether to use the biased
+#'   or the unbiased (in the Poisson case) estimate of the intensity
+#'   squared.
 #' @param method The name of the method to create simulations under the null
 #'   hypothesis.
 #' @param ... Currently unused.
-#' @return An array containing the summary function estimates for the
-#'   original pattern and the randomly labelled patterns. Dimensions:
-#'   orig_and_perm, summ_func, r. The estimates for the given marked point
-#'   pattern are on the row named "original".
+#' @return A list containing the radius vector (r) and an array (a)
+#'   containing the summary function estimates for the original pattern and
+#'   the randomly labelled patterns with dimensions orig_and_perm,
+#'   summ_func, r. The estimates for the given marked point pattern are on
+#'   the row named "original".
 #' @importFrom spatstat pairdist.ppp
 #' @importFrom abind abind
 #' @export
