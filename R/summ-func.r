@@ -69,10 +69,12 @@ one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
 #'
 #' @seealso summ_func_random_labelling
 #' @return A matrix with dimensions: summ_func, r.
+#' @importFrom abind adrop
 #' @export
 summ_func <- function(..., n_perm = 0L) {
     res <- summ_func_random_labelling(..., n_perm = 0L)
-    res[['a']] <- res[['a']]['original', , , drop = TRUE]
+    # There are no simulations.
+    res[['a']] <- adrop(res[['a']], drop = 1L)
     res
 }
 
