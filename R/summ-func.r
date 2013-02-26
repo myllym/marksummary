@@ -1,67 +1,3 @@
-#' Checks that the given pattern is valid.
-#'
-#' @importFrom spatstat is.ppp
-#' @importFrom spatstat is.empty.ppp
-check_pattern <- function(pattern) {
-    if (length(pattern) < 1L) {
-        stop('Pattern was not given.')
-    }
-    if (!is.ppp(pattern)) {
-        stop('The pattern must be a ppp object.')
-    }
-    if (is.empty.ppp(pattern)) {
-        stop('The pattern must not be empty.')
-    }
-    marks <- pattern[['marks']]
-    if (length(marks) < 1L) {
-        stop('The pattern must have marks.')
-    }
-    if (pattern[['markformat']] != 'vector') {
-        stop('The markformat must be vector.')
-    }
-    if (!is.numeric(marks)) {
-        stop('The marks must be of type numeric or integer.')
-    }
-    if (pattern[['window']][['type']] != 'rectangle') {
-        stop('The window must have type \"rectangle\".')
-    }
-    if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
-                       MARGIN = 1L))) {
-        stop('The pattern must be simple i.e. without duplicate points ',
-             'location-wise.')
-    }
-}
-
-#' Check that the given number of permutations makes sense.
-check_n_perm <- function(n_perm) {
-    if (length(n_perm) != 1L || !is.finite(n_perm) || n_perm < 0L) {
-        stop('Number of permutations has to be a scalar, finite, ',
-             'non-negative number.')
-    }
-}
-
-#' Estimate 1 / lambda ^ 2.
-#'
-#' Notice that this estimator is biased.
-#'
-#' @importFrom spatstat area.owin
-one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
-    if (length(use_biased_lambda2) != 1L ||
-        !is.logical(use_biased_lambda2) ||
-        !is.finite(use_biased_lambda2)) {
-        stop('use_biased_lambda2 must be either TRUE or FALSE.')
-    }
-
-    area <- area.owin(pattern[['window']])
-    n_point <- pattern[['n']]
-    if (use_biased_lambda2) {
-        one_per_lambda2 <- area * area / (n_point * n_point)
-    } else {
-        one_per_lambda2 <- area * area / (n_point * (n_point - 1L))
-    }
-    one_per_lambda2
-}
-
 #' Summary functions for one pattern.
 #'
 #' Uses the function \code{\link{summ_func_random_labelling}}. Eats the
@@ -226,6 +162,72 @@ summ_func_random_labelling <-
     }
 
     list(r = r_vec, a = all_summ_func_a)
+}
+
+
+
+#' Checks that the given pattern is valid.
+#'
+#' @importFrom spatstat is.ppp
+#' @importFrom spatstat is.empty.ppp
+check_pattern <- function(pattern) {
+    if (length(pattern) < 1L) {
+        stop('Pattern was not given.')
+    }
+    if (!is.ppp(pattern)) {
+        stop('The pattern must be a ppp object.')
+    }
+    if (is.empty.ppp(pattern)) {
+        stop('The pattern must not be empty.')
+    }
+    marks <- pattern[['marks']]
+    if (length(marks) < 1L) {
+        stop('The pattern must have marks.')
+    }
+    if (pattern[['markformat']] != 'vector') {
+        stop('The markformat must be vector.')
+    }
+    if (!is.numeric(marks)) {
+        stop('The marks must be of type numeric or integer.')
+    }
+    if (pattern[['window']][['type']] != 'rectangle') {
+        stop('The window must have type \"rectangle\".')
+    }
+    if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
+                       MARGIN = 1L))) {
+        stop('The pattern must be simple i.e. without duplicate points ',
+             'location-wise.')
+    }
+}
+
+#' Check that the given number of permutations makes sense.
+check_n_perm <- function(n_perm) {
+    if (length(n_perm) != 1L || !is.finite(n_perm) || n_perm < 0L) {
+        stop('Number of permutations has to be a scalar, finite, ',
+             'non-negative number.')
+    }
+}
+
+#' Estimate 1 / lambda ^ 2.
+#'
+#' Notice that this estimator is biased.
+#'
+#' @importFrom spatstat area.owin
+one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
+    if (length(use_biased_lambda2) != 1L ||
+        !is.logical(use_biased_lambda2) ||
+        !is.finite(use_biased_lambda2)) {
+        stop('use_biased_lambda2 must be either TRUE or FALSE.')
+    }
+
+    area <- area.owin(pattern[['window']])
+    n_point <- pattern[['n']]
+    if (use_biased_lambda2) {
+        one_per_lambda2 <- area * area / (n_point * n_point)
+    } else {
+        one_per_lambda2 <- area * area / (n_point * (n_point - 1L))
+    }
+    one_per_lambda2
 }
 
 
