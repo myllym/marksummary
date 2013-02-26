@@ -61,10 +61,10 @@ summ_func <- function(..., n_perm = 0L) {
 #' plot(res, mtf_name = "mm", L=TRUE)
 #'
 summ_func_random_labelling <-
-        function(pattern, edge_correction = 'translational',
-                mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
-                n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
-                method = 'permute', ...) {
+    function(pattern, edge_correction = 'translational',
+             mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
+             n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
+             method = 'permute', ...) {
     check_pattern(pattern)
     check_n_perm(n_perm)
 
@@ -78,13 +78,13 @@ summ_func_random_labelling <-
     # Handle other things related to the unmarked point pattern.
     one_per_lambda2 <- one_per_lambda_squared(pattern)
     edge_corr <- do_edge_correction(pattern, edge_correction,
-            nearby_arr_idx)
+                                    nearby_arr_idx)
 
     orig_marks <- pattern[['marks']]
 
     # Create mark test functions and the corresponding weights for pairs.
     mtf_l <- create_mtfs_and_weights(orig_marks, mtf_name, edge_corr,
-            one_per_lambda2)
+                                     one_per_lambda2)
     orig_mtf_func_l <- mtf_l[['mtf_func_l']]
     orig_weight_m <- mtf_l[['weight_m']]
 
@@ -95,7 +95,7 @@ summ_func_random_labelling <-
 
     # Calculate summary function estimates.
     orig_summ_func_m <- K_f(orig_mark1, orig_mark2, bin_idx, orig_weight_m,
-            orig_mtf_func_l, mtf_name, n_bin)
+                            orig_mtf_func_l, mtf_name, n_bin)
 
     # FIXME: K_1 gets calculated again and again. It is enough to do it for
     # the original marks. Then remove '1' from mtf_name and add it back
@@ -104,45 +104,47 @@ summ_func_random_labelling <-
     # Simulate from the null hypothesis and estimate summary functions.
     if (method == 'permute') {
         sim_summ_func_a <-
-                replicate(n_perm, {
-                            perm_marks <- sample(orig_marks)
+            replicate(n_perm, {
+                      perm_marks <- sample(orig_marks)
 
-                            perm_mark_l <- marks_within_radius(perm_marks,
-                                    nearby_arr_idx)
-                            perm_mark1_vec <- perm_mark_l[['mark1']]
-                            perm_mark2_vec <- perm_mark_l[['mark2']]
+                      perm_mark_l <- marks_within_radius(perm_marks,
+                                                         nearby_arr_idx)
+                      perm_mark1_vec <- perm_mark_l[['mark1']]
+                      perm_mark2_vec <- perm_mark_l[['mark2']]
 
-                            perm_summ_func_m <- K_f(perm_mark1_vec,
-                                    perm_mark2_vec, bin_idx,
-                                    orig_weight_m,
-                                    orig_mtf_func_l, mtf_name,
-                                    n_bin)
-                        })
+                      perm_summ_func_m <- K_f(perm_mark1_vec,
+                                              perm_mark2_vec, bin_idx,
+                                              orig_weight_m,
+                                              orig_mtf_func_l, mtf_name,
+                                              n_bin)
+            })
     } else {
         # TODO: Implement sampling from empirical mark distribution and
         #       calculate new mark statistics, mark test functions, combined
         #       weight matrix etc. for each set of marks.
         stop('Only the method \"permute\" has been implemented thusfar.')
         sim_summ_func_a <-
-                replicate(n_perm, {
-                            perm_marks <- sample(orig_marks, replace=TRUE)
+            replicate(n_perm, {
+                      perm_marks <- sample(orig_marks, replace=TRUE)
 
-                            perm_mtf_l <- create_mtfs_and_weights(perm_marks, mtf_name, edge_corr,
-                                    one_per_lambda2)
-                            perm_mtf_func_l <- perm_mtf_l[['mtf_func_l']]
-                            perm_weight_m <- perm_mtf_l[['weight_m']]
+                      perm_mtf_l <- create_mtfs_and_weights(perm_marks,
+                                                            mtf_name,
+                                                            edge_corr,
+                                                            one_per_lambda2)
+                      perm_mtf_func_l <- perm_mtf_l[['mtf_func_l']]
+                      perm_weight_m <- perm_mtf_l[['weight_m']]
 
-                            perm_mark_l <- marks_within_radius(perm_marks,
-                                    nearby_arr_idx)
-                            perm_mark1_vec <- perm_mark_l[['mark1']]
-                            perm_mark2_vec <- perm_mark_l[['mark2']]
+                      perm_mark_l <- marks_within_radius(perm_marks,
+                                                         nearby_arr_idx)
+                      perm_mark1_vec <- perm_mark_l[['mark1']]
+                      perm_mark2_vec <- perm_mark_l[['mark2']]
 
-                            perm_summ_func_m <- K_f(perm_mark1_vec,
-                                    perm_mark2_vec, bin_idx,
-                                    perm_weight_m,
-                                    perm_mtf_func_l, mtf_name,
-                                    n_bin)
-                        })
+                      perm_summ_func_m <- K_f(perm_mark1_vec,
+                                              perm_mark2_vec, bin_idx,
+                                              perm_weight_m,
+                                              perm_mtf_func_l, mtf_name,
+                                              n_bin)
+            })
     }
 
 
@@ -154,14 +156,14 @@ summ_func_random_labelling <-
     # Combine summary functions from the original pattern and simulations.
     if (length(sim_summ_func_a) < 1L) {
         all_summ_func_a <-
-                array(orig_summ_func_m, c(dim(orig_summ_func_m), 1L),
-                        dimnames = list(r = NULL,
-                                summ_func =
-                                        dimnames(orig_summ_func_m)[[2]],
-                                orig_and_perm = 'original'))
+            array(orig_summ_func_m, c(dim(orig_summ_func_m), 1L),
+                  dimnames = list(r = NULL,
+                                  summ_func =
+                                      dimnames(orig_summ_func_m)[[2]],
+                                  orig_and_perm = 'original'))
     } else {
         all_summ_func_a <- abind(orig_summ_func_m, sim_summ_func_a,
-                along = 3L)
+                                 along = 3L)
     }
 
     # After this line, the dimension order should be: orig_and_perm,
@@ -170,15 +172,14 @@ summ_func_random_labelling <-
 
     # Keep the names.
     dimnames(all_summ_func_a) <-
-            list(orig_and_perm = c('original', rep.int('', n_perm)),
-                    summ_func = dimnames(all_summ_func_a)[[2]],
-                    r = NULL)
+        list(orig_and_perm = c('original', rep.int('', n_perm)),
+             summ_func = dimnames(all_summ_func_a)[[2]], r = NULL)
 
     if (do_besags_L) {
         is_any_mark_neg <- any(orig_marks < 0)
         is_any_mark_pos <- any(orig_marks > 0)
         l_summ_a <- all_besags_l(all_summ_func_a, is_any_mark_neg,
-                is_any_mark_pos)
+                                 is_any_mark_pos)
         all_summ_func_a <- abind(all_summ_func_a, l_summ_a, along = 2L)
     }
 
@@ -186,16 +187,16 @@ summ_func_random_labelling <-
     # FIXME: Remove the silly repetition. The K_f names have to exist before
     #        Besag's L. Before returning all names have to be in order.
     dimnames(all_summ_func_a) <-
-            list(orig_and_perm = c('original', rep.int('', n_perm)),
-                    summ_func = dimnames(all_summ_func_a)[[2]],
-                    r = NULL)
+        list(orig_and_perm = c('original', rep.int('', n_perm)),
+             summ_func = dimnames(all_summ_func_a)[[2]], r = NULL)
 
-    res <- list(r = r_vec, a = all_summ_func_a, call=match.call())
-    class(res) <- "all_summ_func_rl"
+    res <- list(r = r_vec, a = all_summ_func_a, call = match.call())
+    class(res) <- 'all_summ_func_rl'
     res
 }
 
-plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL, ncol = NULL, ...) {
+plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
+                                  ncol = NULL, ...) {
     # FIXME
     # Make a data frame according to the arguments, i.e. choose which functions to plot.
     # Plot using ggplot.
