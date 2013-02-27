@@ -1,6 +1,6 @@
 \name{create_mtfs_and_weights}
 \alias{create_mtfs_and_weights}
-\title{Create mark test functions and weights.}
+\title{Create mark test functions and weights}
 \usage{
   create_mtfs_and_weights(marks, mtf_name, edge_corr,
     one_per_lambda2)

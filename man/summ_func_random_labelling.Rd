@@ -45,7 +45,10 @@
   estimate of the intensity squared.}
 
   \item{method}{The name of the method to create
-  simulations under the null hypothesis.}
+  simulations under the null hypothesis. 'permute' results
+  in permutations of the marks. Using 'sample' will sample
+  the marks from the empirical mark distribution with
+  replacement. 'permute' is the default.}
 
   \item{...}{Currently unused.}
 }
@@ -60,5 +63,11 @@
 \description{
   Calculates summary functions for a pattern and its
   simulations under the hypothesis of random labelling.
+}
+\examples{
+require(spatstat)
+pp <- spruces
+res <- summ_func_random_labelling(pp)
+plot(res, mtf_name = "m", L=TRUE)
 }
 

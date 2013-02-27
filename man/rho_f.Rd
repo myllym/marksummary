@@ -1,11 +1,34 @@
 \name{rho_f}
 \alias{rho_f}
-\title{Calculates the uncumulated rho_f-estimates.}
+\title{Calculates the uncumulated rho_f-estimates}
 \usage{
   rho_f(mark1, mark2, bin_idx, weight_m, mtf_func_l,
     mtf_name, n_bin)
 }
+\arguments{
+  \item{mark1}{The marks of the first points of pairs in a
+  vector.}
+
+  \item{mark2}{The marks of the second points of pairs in a
+  vector.}
+
+  \item{bin_idx}{A vector of indices which tell which
+  radius bin each point pair belongs to.}
+
+  \item{weight_m}{A weight matrix for point pairs.}
+
+  \item{mtf_func_l}{A list of mark test functions all of
+  which take two real marks and return a real value.}
+
+  \item{mtf_name}{The names of the mark test functions.
+  Matches mtf_func_l in order.}
+
+  \item{n_bin}{The number of bins in the radius vector.}
+}
+\value{
+  A matrix of rho_f values. Dimensions r, mtf.
+}
 \description{
-  Calculates the uncumulated rho_f-estimates.
+  Calculates the uncumulated rho_f-estimates
 }
 
