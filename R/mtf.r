@@ -65,6 +65,8 @@ create_mtf_func_morAbs <- function(mark_stat_l) {
     return(function(m1, m2) { abs((m1 - mean_mark) * (m2 - mean_mark)) })
 }
 
+#' Create mark test functions
+#'
 #' Given the names of mark test functions and the required mark statistics,
 #' produce mark test functions as closures.
 create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
@@ -74,6 +76,8 @@ create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
                   })
 }
 
+#' Statistics of the mark distribution
+#'
 #' Adds only those mark statistics on the result list which are needed by
 #' the K_f functions to be calculated from the given f.
 mark_distr_stats <- function(marks, mtf_name) {
@@ -170,7 +174,7 @@ specialise_weight <- function(weight_vec, mark_stat, mtf_name,
     outer(weight_vec, mtf_coeff_vec * one_per_lambda2, '*')
 }
 
-#' Create mark test functions and weights.
+#' Create mark test functions and weights
 #'
 #' Create a list of mark test functions and a matrix of weights.
 #'
