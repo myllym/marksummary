@@ -45,7 +45,9 @@ summ_func <- function(..., n_perm = 0L) {
 #'   or the unbiased (in the Poisson case) estimate of the intensity
 #'   squared.
 #' @param method The name of the method to create simulations under the null
-#'   hypothesis.
+#'   hypothesis. 'permute' results in permutations of the marks. Using
+#'   'sample' will sample the marks from the empirical mark distribution
+#'   with replacement. 'permute' is the default.
 #' @param ... Currently unused.
 #' @return A list containing the radius vector (r) and an array (a)
 #'   containing the summary function estimates for the original pattern and
@@ -108,11 +110,11 @@ summ_func_random_labelling <-
 
     if (n_perm > 0L) {
         # Simulate from the null hypothesis and estimate summary functions.
-        if (method == 'permute') {
+        if (method %in% 'permute') {
             # Result dimensions: r, summ_func, permutation.
             sim_summ_func_a <-
                 replicate(n_perm, {
-                          perm_marks <- sample(orig_marks)
+                          perm_marks <- sample(orig_marks, replace = FALSE)
 
                           perm_mark_l <- marks_within_radius(perm_marks,
                                                              nearby_arr_idx)
@@ -125,12 +127,33 @@ summ_func_random_labelling <-
                                                   orig_mtf_func_l, mtf_name,
                                                   n_bin)
                 })
+        } else if (method %in% 'sample') {
+            # Result dimensions: r, summ_func, permutation.
+            sim_summ_func_a <-
+                replicate(n_perm, {
+                          perm_marks <- sample(orig_marks, replace = TRUE)
+
+                          perm_mtf_l <-
+                              create_mtfs_and_weights(perm_marks,
+                                                      mtf_name,
+                                                      edge_corr,
+                                                      one_per_lambda2)
+                          perm_mtf_func_l <- perm_mtf_l[['mtf_func_l']]
+                          perm_weight_m <- perm_mtf_l[['weight_m']]
+
+                          perm_mark_l <- marks_within_radius(perm_marks,
+                                                             nearby_arr_idx)
+                          perm_mark1_vec <- perm_mark_l[['mark1']]
+                          perm_mark2_vec <- perm_mark_l[['mark2']]
+
+                          perm_summ_func_m <- K_f(perm_mark1_vec,
+                                                  perm_mark2_vec, bin_idx,
+                                                  perm_weight_m,
+                                                  perm_mtf_func_l, mtf_name,
+                                                  n_bin)
+                })
         } else {
-            # TODO: Implement sampling from empirical mark distribution and
-            #       calculate new mark statistics, mark test functions,
-            #       combined weight matrix etc. for each set of marks.
-            stop('Only the method \"permute\" has been implemented ',
-                 'thusfar.')
+            stop('method was not recognized.')
         }
 
         sim_summ_func_a <-
