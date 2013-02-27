@@ -57,6 +57,11 @@ summ_func <- function(..., n_perm = 0L) {
 #' @importFrom spatstat pairdist.ppp
 #' @importFrom abind abind
 #' @export
+#' @examples
+#' require(spatstat)
+#' pp <- spruces
+#' res <- summ_func_random_labelling(pp)
+#' plot(res, mtf_name = "m", L=TRUE)
 summ_func_random_labelling <-
     function(pattern, edge_correction = 'translate',
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
@@ -184,9 +189,18 @@ summ_func_random_labelling <-
                                               'r')
     }
 
-    list(r = r_vec, a = all_summ_func_a)
+    res <- list(r = r_vec, a = all_summ_func_a, call = match.call())
+    class(res) <- 'all_summ_func_rl'
+    res
 }
 
+plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
+                                  ncol = NULL, ...) {
+    # FIXME
+    # Make a data frame according to the arguments, i.e. choose which
+    # functions to plot.
+    # Plot using ggplot.
+}
 
 
 #' Checks that the given pattern is valid.
