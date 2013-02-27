@@ -341,7 +341,19 @@ weigh_and_bin <- function(f_value, weight, idx_vec, n_bin) {
           PACKAGE = 'marksummary')
 }
 
-#' Calculates the uncumulated rho_f-estimates.
+#' Calculates the uncumulated rho_f-estimates
+#'
+#' @param mark1 The marks of the first points of pairs in a vector.
+#' @param mark2 The marks of the second points of pairs in a vector.
+#' @param bin_idx A vector of indices which tell which radius bin each point
+#'   pair belongs to.
+#' @param weight_m A weight matrix for point pairs.
+#' @param mtf_func_l A list of mark test functions all of which take two
+#'   real marks and return a real value.
+#' @param mtf_name The names of the mark test functions. Matches mtf_func_l
+#'   in order.
+#' @param n_bin The number of bins in the radius vector.
+#' @return A matrix of rho_f values. Dimensions r, mtf.
 rho_f <- function(mark1, mark2, bin_idx, weight_m, mtf_func_l, mtf_name,
                   n_bin) {
     val_m <- as.matrix(vapply(seq_along(mtf_func_l),
