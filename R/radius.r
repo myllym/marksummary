@@ -63,7 +63,6 @@ create_r_max <- function(min_window_side, recommended_r_max_ratio = 0.25) {
 }
 
 #' Create the radius vector given the maximum radius and pattern.
-#' FIXME
 create_r_vec <- function(r_max, min_window_side, n_max_break = 2048L) {
     n_break_num <- r_max / min_window_side * n_max_break
     # Use round or floor. It should not matter much. If we chose the

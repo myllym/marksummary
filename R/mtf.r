@@ -31,7 +31,6 @@ check_mtf <- function(mtf_name) {
 }
 
 
-# Here start the "constructors" (closures, really).
 
 create_mtf_func_1 <- function(mark_stat_l) {
     return(function(m1, m2) { rep.int(1, length(m1)) })
@@ -66,8 +65,6 @@ create_mtf_func_morAbs <- function(mark_stat_l) {
     return(function(m1, m2) { abs((m1 - mean_mark) * (m2 - mean_mark)) })
 }
 
-#' Create mark test functions
-#'
 #' Given the names of mark test functions and the required mark statistics,
 #' produce mark test functions as closures.
 create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
@@ -77,8 +74,6 @@ create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
                   })
 }
 
-#' Statistics of the mark distribution
-#'
 #' Adds only those mark statistics on the result list which are needed by
 #' the K_f functions to be calculated from the given f.
 mark_distr_stats <- function(marks, mtf_name) {
@@ -155,11 +150,16 @@ mark_distr_stats <- function(marks, mtf_name) {
 
 
 
-#' Create an individual weight vector for each mark test function.
+#' Individualize weight vectors for each mark test function.
 #'
-#' Create an individual weight vector for each mark test function. Bake in
-#' 1 / lambda ^ 2 and 1 / c_f so that all weighing can be handled by one
-#' multiplication per pair of points per mark test function.
+#' Create an individual weight vector for each mark test function. The
+#' weight of the point pair (x_1, x_2) is
+#' w_{1, 2} = e_{1, 2} / (lambda^2 * c_f),
+#' where e_{1, 2} is the edge correction term, lambda^2 is the estimate of
+#' the intensity squared and c_f is the scaling term for the mark test
+#' function. This way each pair of points has exactly one coefficient
+#' tailored for them.
+#'
 #' @return A matrix of weights. Each column is for a different mark test
 #'   function. Each row is for a different _ordered_ point pair where
 #'   (x1, x2) is different from (x2, x1).
@@ -170,12 +170,24 @@ specialise_weight <- function(weight_vec, mark_stat, mtf_name,
     outer(weight_vec, mtf_coeff_vec * one_per_lambda2, '*')
 }
 
-#' Create mark test functions and weights
+#' Create mark test functions and weights.
 #'
-#' Create mark test functions and weights where the weights are a
-#' combination of 1/lambda^2 (where lambda is the intensity),
-#' scaling factor c_f and edge correction.
-#' @return FIXME
+#' Create a list of mark test functions and a matrix of weights.
+#'
+#' @param marks A vector of marks on which the mark test functions and their
+#'   scaling coefficients will be based.
+#' @param mtf_name A vector containing the names of the mark test functions.
+#' @param edge_corr A vector of edge correction coefficients for point
+#'   pairs.
+#' @param one_per_lambda2 The value of 1 / lambda^2 where lambda^2 is the
+#'   estimate of the intensity squared. A scalar.
+#' @return A list containing a list of mark tests functions (mtf_func_l) and
+#'   a weight matrix (weight_m). Each mark test function takes two numeric
+#'   vectors containing the marks of the points x_1 and the points x_2,
+#'   respectively, from point pairs (x_1, x_2). The functions are in the
+#'   same order as mtf_name. Each column of the weight matrix is reserved
+#'   for use with the corresponding mark test function. The columns are in
+#'   the same order as mtf_name. Each row corresponds to one pair of points.
 create_mtfs_and_weights <- function(marks, mtf_name, edge_corr,
                                     one_per_lambda2) {
     check_mtf(mtf_name)

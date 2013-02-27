@@ -13,4 +13,7 @@
   of permutations the user has given and replaces it with
   zero.
 }
+\seealso{
+  summ_func_random_labelling
+}
 

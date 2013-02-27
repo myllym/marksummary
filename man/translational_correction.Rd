@@ -34,7 +34,7 @@
   Calculates a vector of edge correction weights for given
   point pairs using the translational edge-correction.
   Notice that the inverse has already been taken in the
-  returned vector. Each matrix element e_{1,2}^{-1} has
+  returned vector. Each matrix element e_{1, 2}^{-1} has
   value 1.0 / ((win_x - abs(x1 - x2)) * (win_y - abs(y1 -
   y2))).
 }

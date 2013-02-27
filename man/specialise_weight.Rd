@@ -1,6 +1,6 @@
 \name{specialise_weight}
 \alias{specialise_weight}
-\title{Create an individual weight vector for each mark test function.}
+\title{Individualize weight vectors for each mark test function.}
 \usage{
   specialise_weight(weight_vec, mark_stat, mtf_name,
     one_per_lambda2)
@@ -12,8 +12,11 @@
 }
 \description{
   Create an individual weight vector for each mark test
-  function. Bake in 1 / lambda ^ 2 and 1 / c_f so that all
-  weighing can be handled by one multiplication per pair of
-  points per mark test function.
+  function. The weight of the point pair (x_1, x_2) is
+  w_{1, 2} = e_{1, 2} / (lambda^2 * c_f), where e_{1, 2} is
+  the edge correction term, lambda^2 is the estimate of the
+  intensity squared and c_f is the scaling term for the
+  mark test function. This way each pair of points has
+  exactly one coefficient tailored for them.
 }
 
