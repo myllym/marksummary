@@ -15,7 +15,7 @@
 
 #' Check that the given mark test function names are valid.
 check_mtf <- function(mtf_name) {
-    available <- c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'mor', 'morAbs')
+    available <- c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs')
 
     matched <- mtf_name %in% available
     n_match <- sum(matched)
@@ -53,11 +53,6 @@ create_mtf_func_gamma <- function(mark_stat_l) {
 
 create_mtf_func_gammaAbs <- function(mark_stat_l) {
     return(function(m1, m2) { abs(m1 - m2) })
-}
-
-create_mtf_func_mor <- function(mark_stat_l) {
-    mean_mark <- mark_stat_l[['mean']]
-    return(function(m1, m2) { (m1 - mean_mark) * (m2 - mean_mark) })
 }
 
 create_mtf_func_morAbs <- function(mark_stat_l) {
@@ -114,16 +109,6 @@ mark_distr_stats <- function(marks, mtf_name) {
             res[['var']] <- var(marks)
         }
         res <- add_scaling_coeff(res, 'gamma', 1 / res[['var']])
-    }
-
-    if (is.element('mor', mtf_name)) {
-        if (length(res[['mean']]) < 1L) {
-            res[['mean']] <- mean(marks)
-        }
-        if (length(res[['var']]) < 1L) {
-            res[['var']] <- var(marks)
-        }
-        res <- add_scaling_coeff(res, 'mor', 1 / res[['var']])
     }
 
     if (is.element('morAbs', mtf_name)) {
@@ -250,7 +235,7 @@ besags_L_valid <- function(mtf_name, is_any_mark_neg, is_any_mark_pos) {
                                'gammaAbs')
         } else {
             # Only zero marks. A bit silly.
-            transformable <- c('1', 'm', 'mm', 'gamma', 'mor', 'morAbs',
+            transformable <- c('1', 'm', 'mm', 'gamma', 'morAbs',
                                'gammaAbs')
         }
     }
