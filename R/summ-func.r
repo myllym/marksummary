@@ -24,7 +24,7 @@ summ_func <- function(..., n_perm = 0L) {
 #' @param pattern A \code{\link[spatstat]{ppp}} object as the simple marked
 #'   point pattern to be analysed. The marks need to be in the form of a
 #'   numeric vector. The window has to have the type "rectangle".
-#' @param edge_corr_func The name of the edge correction to be used. Options
+#' @param edge_correction The name of the edge correction to be used. Options
 #'   are 'translate' and 'none'.
 #' @param mtf_name A vector of mark test function names. "1" stands for the
 #'   unmarked K-function. Accepted values are '1', 'm', 'mm', 'gamma',
