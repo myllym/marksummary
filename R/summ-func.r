@@ -202,6 +202,18 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
     # Plot using ggplot.
 }
 
+#' Checks if a window object is a circle
+#'
+#' @param digit 
+is.disc <- function(x, digits=6, ...) {
+    if (x[['type']] != 'polygonal') return(FALSE)
+    if (diff(x[['xrange']]) != diff(x[['yrange']])) return(FALSE)
+    r <- diff(x[['xrange']])/2
+    x0 <- mean(x[['xrange']])
+    y0 <- mean(x[['yrange']])
+    if ( sum( round((x[['bdry']][[1]][['x']]-x0)^2 + (x[['bdry']][[1]][['y']]-y0)^2, digits=digits) == round(r^2, digits=digits) ) != length(x[['bdry']][[1]][['x']]) ) return(FALSE)
+    return(TRUE)
+}
 
 #' Checks that the given pattern is valid.
 #'
