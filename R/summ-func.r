@@ -216,6 +216,19 @@ is.disc <- function(x, digits=6, ...) {
     return(TRUE)
 }
 
+#' Finds the radius and centre of a circle defined by a polygonial boundary
+#'
+#' @param digit The accuracy to check whether the points at the polygonial boundary
+#'               are on the arch of a circle.
+disc_param <- function(x, ...) {
+    if(!is.disc(x)) stop("x is not a circ.")
+    r <- diff(x[['xrange']])/2
+    x0 <- mean(x[['xrange']])
+    y0 <- mean(x[['yrange']])
+    list(r = r, centre = c(x0, y0))
+}
+
+
 #' Checks that the given pattern is valid.
 #'
 #' @importFrom spatstat is.ppp
