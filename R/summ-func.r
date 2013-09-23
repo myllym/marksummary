@@ -204,10 +204,11 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
 
 #' Checks if a window object is a circle
 #'
-#' @param digit 
+#' @param digit The accuracy to check whether the points at the polygonial boundary
+#'               are on the arch of a circle.
 is.disc <- function(x, digits=6, ...) {
-    if (x[['type']] != 'polygonal') return(FALSE)
-    if (diff(x[['xrange']]) != diff(x[['yrange']])) return(FALSE)
+    if(x[['type']] != 'polygonal') return(FALSE)
+    if(diff(x[['xrange']]) != diff(x[['yrange']])) return(FALSE)
     r <- diff(x[['xrange']])/2
     x0 <- mean(x[['xrange']])
     y0 <- mean(x[['yrange']])
