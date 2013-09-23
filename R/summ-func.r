@@ -222,10 +222,10 @@ is.disc <- function(x, digits=6, ...) {
 #'               are on the arch of a circle.
 disc_param <- function(x, ...) {
     if(!is.disc(x)) stop("x is not a circ.")
-    r <- diff(x[['xrange']])/2
+    R <- diff(x[['xrange']])/2
     x0 <- mean(x[['xrange']])
     y0 <- mean(x[['yrange']])
-    list(r = r, centre = c(x0, y0))
+    list(R = R, centre = c(x0, y0))
 }
 
 
