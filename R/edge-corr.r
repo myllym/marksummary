@@ -35,7 +35,7 @@ translational_correction <- function(window, x1, y1, x2, y2) {
     if(is.disc(window)) {
         R <- disc_param(window)[['R']]
         d <- sqrt((x1-x2)^2 + (y1-y2)^2)
-        w <- 1.0 / ( 2.0 * R^2 * acos(d/(2*R)) - d/2 * sqrt(4*R^2 - d^2) )
+        w <- 1.0 / ( 2.0 * R^2 * acos(d/(2.0*R)) - d/2.0 * sqrt(4.0*R^2 - d^2) )
     }
     w
 }
