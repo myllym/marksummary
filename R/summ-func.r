@@ -217,6 +217,13 @@ is.disc <- function(x, digits=6, ...) {
     return(TRUE)
 }
 
+#' Checks if a window object is a rectangle
+#'
+is.rectangle <- function(x, ...) {
+    if(!is.owin(x)) stop("x is not an owin object.")
+    x[['type']] == 'rectangle'
+}
+
 #' Finds the radius and centre of a circle defined by a polygonial boundary
 #'
 #' @param digit The accuracy to check whether the points at the polygonial boundary
@@ -254,7 +261,7 @@ check_pattern <- function(pattern) {
     if (!is.numeric(marks)) {
         stop('The marks must be of type numeric or integer.')
     }
-    if ( !( pattern[['window']][['type']] == 'rectangle' || is.disc(pattern[['window']])) ) {
+    if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
         stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
     }
     if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
