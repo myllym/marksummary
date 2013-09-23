@@ -253,8 +253,8 @@ check_pattern <- function(pattern) {
     if (!is.numeric(marks)) {
         stop('The marks must be of type numeric or integer.')
     }
-    if (pattern[['window']][['type']] != 'rectangle') {
-        stop('The window must have type \"rectangle\".')
+    if ( !( pattern[['window']][['type']] == 'rectangle' || is.disc(pattern[['window']])) ) {
+        stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
     }
     if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
                        MARGIN = 1L))) {
