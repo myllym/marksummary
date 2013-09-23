@@ -6,7 +6,7 @@
 #' e_{1, 2}^{-1} has value
 #' 1.0 / ((win_x - abs(x1 - x2)) * (win_y - abs(y1 - y2)))
 #' for a rectangular window. For a circular window, it is
-#' 1.0 / ( 4.0/3.0 * pi * R^3 * (1 - 3*d/(4*R) + d^3/(16*R^3)) )
+#' 1.0 / ( 2.0 * R^2 * acos(d/(2*R)) - d/2 * sqrt(4*R^2 - d^2) )
 #' where d is the distance between (x1, y1) and (x2, y2) and R is the
 #' radius of the disc.
 #'
@@ -35,7 +35,7 @@ translational_correction <- function(window, x1, y1, x2, y2) {
     if(is.disc(window)) {
         R <- disc_param(window)[['R']]
         d <- sqrt((x1-x2)^2 + (y1-y2)^2)
-        w <- 1.0 / ( 4.0/3.0 * pi * R^3 * (1 - 3*d/(4*R) + d^3/(16*R^3)) )
+        w <- 1.0 / ( 2.0 * R^2 * acos(d/(2*R)) - d/2 * sqrt(4*R^2 - d^2) )
     }
     w
 }
