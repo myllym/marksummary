@@ -202,6 +202,13 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
     # Plot using ggplot.
 }
 
+#' Checks if a window object is a rectangle
+#'
+is.rectangle <- function(x, ...) {
+    if(!is.owin(x)) stop("x is not an owin object.")
+    x[['type']] == 'rectangle'
+}
+
 #' Checks if a window object is a circle
 #'
 #' @param digit The accuracy to check whether the points at the polygonial boundary
@@ -215,13 +222,6 @@ is.disc <- function(x, digits=6, ...) {
     y0 <- mean(x[['yrange']])
     if ( sum( round((x[['bdry']][[1]][['x']]-x0)^2 + (x[['bdry']][[1]][['y']]-y0)^2, digits=digits) == round(r^2, digits=digits) ) != length(x[['bdry']][[1]][['x']]) ) return(FALSE)
     return(TRUE)
-}
-
-#' Checks if a window object is a rectangle
-#'
-is.rectangle <- function(x, ...) {
-    if(!is.owin(x)) stop("x is not an owin object.")
-    x[['type']] == 'rectangle'
 }
 
 #' Finds the radius and centre of a circle defined by a polygonial boundary
