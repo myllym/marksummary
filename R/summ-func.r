@@ -207,6 +207,7 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
 #' @param digit The accuracy to check whether the points at the polygonial boundary
 #'               are on the arch of a circle.
 is.disc <- function(x, digits=6, ...) {
+    if(!is.owin(x)) stop("x is not an owin object.")
     if(x[['type']] != 'polygonal') return(FALSE)
     if(diff(x[['xrange']]) != diff(x[['yrange']])) return(FALSE)
     r <- diff(x[['xrange']])/2
