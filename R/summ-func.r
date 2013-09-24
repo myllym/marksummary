@@ -227,7 +227,7 @@ is.disc <- function(x, digits=6, ...) {
 #' Finds the radius and centre of a circle defined by a polygonial boundary
 #'
 disc_param <- function(x, ...) {
-    if(!is.disc(x)) stop("x is not a circ.")
+    if(!is.disc(x)) stop("x is not a disc.")
     R <- diff(x[['xrange']])/2
     x0 <- mean(x[['xrange']])
     y0 <- mean(x[['yrange']])
