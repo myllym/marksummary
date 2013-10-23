@@ -5,12 +5,12 @@
 #'
 #' @seealso summ_func_random_labelling
 #' @inheritParams summ_func_random_labelling
-#' @param n_perm Ignored.
+#' @param n_sim Ignored.
 #' @return A matrix with dimensions: summ_func, r.
 #' @importFrom abind adrop
 #' @export
-summ_func <- function(..., n_perm = 0L) {
-    res <- summ_func_random_labelling(..., n_perm = 0L)
+summ_func <- function(..., n_sim = 0L) {
+    res <- summ_func_random_labelling(..., n_sim = 0L)
     # There are no simulations.
     res[['a']] <- adrop(res[['a']], drop = 1L)
     res
@@ -29,7 +29,7 @@ summ_func <- function(..., n_perm = 0L) {
 #' @param mtf_name A vector of mark test function names. "1" stands for the
 #'   unmarked K-function. Accepted values are '1', 'm', 'mm', 'gamma',
 #'   'gammaAbs' and 'morAbs'.
-#' @param n_perm The number of permutations.
+#' @param n_sim The number of permutations.
 #' @param r_max A positive scalar value representing the maximum radius that
 #'   should be considered. r_vec overrides r_max. By default, r_max is NULL
 #'   and will get a sensible default.
@@ -65,10 +65,10 @@ summ_func <- function(..., n_perm = 0L) {
 summ_func_random_labelling <-
     function(pattern, edge_correction = 'translate',
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),
-             n_perm = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
+             n_sim = 999L, r_max = NULL, r_vec = NULL, do_besags_L = TRUE,
              method = 'permute', use_biased_lambda2 = FALSE, ...) {
     check_pattern(pattern)
-    check_n_perm(n_perm)
+    check_n_perm(n_sim)
 
     # Handle things related to distances of points.
     radius_l <- consider_radius(pattern, r_max, r_vec)
@@ -113,12 +113,12 @@ summ_func_random_labelling <-
     # '1' from mtf_name, orig_weight_m, orig_mtf_func_l and add K_1 and
     # possibly L_1 back later for the simulations.
 
-    if (n_perm > 0L) {
+    if (n_sim > 0L) {
         # Simulate from the null hypothesis and estimate summary functions.
         if (method %in% 'permute') {
             # Result dimensions: r, summ_func, permutation.
             sim_summ_func_a <-
-                replicate(n_perm, {
+                replicate(n_sim, {
                           perm_marks <- sample(orig_marks, replace = FALSE)
 
                           perm_mark_l <- marks_within_radius(perm_marks,
@@ -135,7 +135,7 @@ summ_func_random_labelling <-
         } else if (method %in% 'sample') {
             # Result dimensions: r, summ_func, permutation.
             sim_summ_func_a <-
-                replicate(n_perm, {
+                replicate(n_sim, {
                           perm_marks <- sample(orig_marks, replace = TRUE)
 
                           perm_mtf_l <-
@@ -163,7 +163,7 @@ summ_func_random_labelling <-
 
         sim_summ_func_a <-
             array(sim_summ_func_a,
-                  dim=c(n_bin, dim(orig_summ_func_a)[2], n_perm),
+                  dim=c(n_bin, dim(orig_summ_func_a)[2], n_sim),
                   dimnames=list(r=NULL,
                                 summ_func=dimnames(orig_summ_func_a)[[2]],
                                 orig_and_perm=NULL))
@@ -238,8 +238,8 @@ check_pattern <- function(pattern) {
 }
 
 #' Check that the given number of permutations makes sense.
-check_n_perm <- function(n_perm) {
-    if (length(n_perm) != 1L || !is.finite(n_perm) || n_perm < 0L) {
+check_n_perm <- function(n_sim) {
+    if (length(n_sim) != 1L || !is.finite(n_sim) || n_sim < 0L) {
         stop('Number of permutations has to be a scalar, finite, ',
              'non-negative number.')
     }

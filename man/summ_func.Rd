@@ -2,10 +2,10 @@
 \alias{summ_func}
 \title{Summary functions for one pattern.}
 \usage{
-  summ_func(..., n_perm = 0L)
+  summ_func(..., n_sim = 0L)
 }
 \arguments{
-  \item{n_perm}{Ignored.}
+  \item{n_sim}{Ignored.}
 
   \item{...}{Currently unused.}
 }

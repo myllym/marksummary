@@ -2,7 +2,7 @@
 \alias{check_n_perm}
 \title{Check that the given number of permutations makes sense.}
 \usage{
-  check_n_perm(n_perm)
+  check_n_perm(n_sim)
 }
 \description{
   Check that the given number of permutations makes sense.
