@@ -1,0 +1,25 @@
+citHeader("To cite package ‘spptest’ in publications use:")
+
+citEntry(
+    entry = "Article",
+    title = "Deviation test construction and power comparison for marked spatial point patterns",
+    journal = "arXiv:1306.1028 [stat.ME]",
+    year = "2013",
+    author = "M. Myllymäki, P. Grabarnik, H. Seijo and D. Stoyan",
+    textVersion = "Myllymäki, M., Grabarnik, P., Seijo, H., and Stoyan, D. (2013).
+Deviation test construction and power comparison for marked spatial point patterns.
+arXiv:1306.1028 [stat.ME]."
+)
+
+citEntry(
+    entry = "Article",
+    title = "Correct testing of mark independence for marked point patterns",
+    journal = "Ecological Modelling",
+    year = "2013",
+    volume = "222",
+    pages = "3888-3894",
+    author = "P. Grabarnik, M. Myllymäki and D. Stoyan",
+    textVersion = "Grabarnik, P., Myllymäki, M. and Stoyan, D. (2013).
+Correct testing of mark independence for marked point patterns.
+Ecological Modelling 222, 3888-3894. DOI: 10.1016/j.ecolmodel.2011.10.005."
+)
