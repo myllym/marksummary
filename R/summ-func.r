@@ -61,7 +61,6 @@ summ_func <- function(..., nsim = 0L) {
 #' require(spatstat)
 #' pp <- spruces
 #' res <- summ_func_random_labelling(pp)
-#' plot(res, mtf_name = "m", L=TRUE)
 summ_func_random_labelling <-
     function(pattern, edge_correction = 'translate',
              mtf_name = c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'),

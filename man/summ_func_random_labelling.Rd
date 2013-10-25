@@ -68,6 +68,5 @@
 require(spatstat)
 pp <- spruces
 res <- summ_func_random_labelling(pp)
-plot(res, mtf_name = "m", L=TRUE)
 }
 
