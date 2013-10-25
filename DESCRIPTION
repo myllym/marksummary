@@ -9,6 +9,9 @@ Authors@R: c(
     person(given = 'Pavel', family = 'Grabarnik', role = c('aut'),
     email = list('gpya@rambler.ru', 'pavel.grabarnik@gmail.com'))
     )
+Author: Mari Myllymäki, Henri Seijo and Pavel Grabarnik
+Maintainer: Mari Myllymäki <mari.j.myllymaki@gmail.com> and Henri Seijo
+    <henri.seijo@iki.fi>
 Version: 0.1.2
 Date: 2013-02-27
 License: GPL-3
