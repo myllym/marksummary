@@ -36,7 +36,10 @@
   Notice that the inverse has already been taken in the
   returned vector. Each matrix element e_{1, 2}^{-1} has
   value 1.0 / ((win_x - abs(x1 - x2)) * (win_y - abs(y1 -
-  y2))).
+  y2))) for a rectangular window. For a circular window, it
+  is 1.0 / ( 2.0 * R^2 * acos(d/(2*R)) - d/2 * sqrt(4*R^2 -
+  d^2) ) where d is the distance between (x1, y1) and (x2,
+  y2) and R is the radius of the disc.
 }
 \references{
   [1] J. Illian, A. Penttinen, H. Stoyan, and D. Stoyan,

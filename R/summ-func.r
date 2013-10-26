@@ -201,6 +201,38 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
     # Plot using ggplot.
 }
 
+#' Checks if a window object is a rectangle
+#'
+is.rectangle <- function(x, ...) {
+    if(!is.owin(x)) stop("x is not an owin object.")
+    x[['type']] == 'rectangle'
+}
+
+#' Checks if a window object is a circle
+#'
+#' @param digit The accuracy to check whether the points at the polygonial boundary
+#'               are on the arch of a circle.
+is.disc <- function(x, digits=6, ...) {
+    if(!is.owin(x)) stop("x is not an owin object.")
+    if(x[['type']] != 'polygonal') return(FALSE)
+    if(diff(x[['xrange']]) != diff(x[['yrange']])) return(FALSE)
+    r <- diff(x[['xrange']])/2
+    x0 <- mean(x[['xrange']])
+    y0 <- mean(x[['yrange']])
+    if ( sum( round((x[['bdry']][[1]][['x']]-x0)^2 + (x[['bdry']][[1]][['y']]-y0)^2, digits=digits) == round(r^2, digits=digits) ) != length(x[['bdry']][[1]][['x']]) ) return(FALSE)
+    return(TRUE)
+}
+
+#' Finds the radius and centre of a circle defined by a polygonial boundary
+#'
+disc_param <- function(x, ...) {
+    if(!is.disc(x)) stop("x is not a disc.")
+    R <- diff(x[['xrange']])/2
+    x0 <- mean(x[['xrange']])
+    y0 <- mean(x[['yrange']])
+    list(R = R, centre = c(x0, y0))
+}
+
 
 #' Checks that the given pattern is valid.
 #'
@@ -226,8 +258,8 @@ check_pattern <- function(pattern) {
     if (!is.numeric(marks)) {
         stop('The marks must be of type numeric or integer.')
     }
-    if (pattern[['window']][['type']] != 'rectangle') {
-        stop('The window must have type \"rectangle\".')
+    if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
+        stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
     }
     if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
                        MARGIN = 1L))) {
