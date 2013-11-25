@@ -203,6 +203,7 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
 
 #' Checks if a window object is a rectangle
 #'
+#' @importFrom spatstat is.owin
 is.rectangle <- function(x, ...) {
     if(!is.owin(x)) stop("x is not an owin object.")
     x[['type']] == 'rectangle'
@@ -212,6 +213,7 @@ is.rectangle <- function(x, ...) {
 #'
 #' @param digit The accuracy to check whether the points at the polygonial boundary
 #'               are on the arch of a circle.
+#' @importFrom spatstat is.owin
 is.disc <- function(x, digits=6, ...) {
     if(!is.owin(x)) stop("x is not an owin object.")
     if(x[['type']] != 'polygonal') return(FALSE)
