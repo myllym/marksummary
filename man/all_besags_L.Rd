@@ -8,6 +8,16 @@
 \arguments{
   \item{all_k_a}{An array containing all K_f for all
   patterns. Dimensions: orig_and_perm, summ_func, r.}
+
+  \item{is_any_mark_neg}{A logical.}
+
+  \item{is_any_mark_pos}{A logical.}
+
+  \item{sep_char}{A character used to separate L_char and
+  mtf_name.}
+
+  \item{L_char}{A character used for the tranformed
+  function.}
 }
 \value{
   An array of dimensions: orig_and_perm, summ_func, r. The

@@ -4,6 +4,11 @@
 \usage{
   check_mtf(mtf_name)
 }
+\arguments{
+  \item{mtf_name}{A string giving the name of the mark test
+  function.  Possible names are '1', 'm', 'mm', 'gamma',
+  'gammaAbs', 'morAbs'.}
+}
 \description{
   Check that the given mark test function names are valid.
 }

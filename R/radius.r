@@ -1,6 +1,6 @@
 #' Length of the shorter window side.
 #'
-#' @param A \code{\link[spatstat]{ppp}} object that has a rectangular
+#' @param pattern A \code{\link[spatstat]{ppp}} object that has a rectangular
 #'   window.
 #' @return A scalar value giving the length of the shorter edge of the
 #'   window.
@@ -20,6 +20,9 @@ round_nonneg_into_int <- function(x) {
 }
 
 #' Check that the given maximum radius makes sense.
+#'
+#' @param r_max Given value for the maximum radius.
+#' @param min_window_side The minimum window side length.
 check_r_max <- function(r_max, min_window_side) {
     if (length(r_max) != 1L || !is.finite(r_max) || r_max <= 0 ||
         r_max > min_window_side) {
@@ -29,6 +32,9 @@ check_r_max <- function(r_max, min_window_side) {
 }
 
 #' Check that the given radius vector makes sense.
+#'
+#' @param r_vec Given radius vector.
+#' @param min_window_side The minimum window side length.
 check_r_vec <- function(r_vec, min_window_side) {
     n_r <- length(r_vec)
     if (n_r < 1L) {
@@ -58,11 +64,18 @@ check_r_vec <- function(r_vec, min_window_side) {
 }
 
 #' Create the maximum radius given the pattern.
+#'
+#' @param min_window_side The minimum window side length.
+#' @param recommended_r_max_ratio The 'recommended' r_max / min_window_size ratio.
 create_r_max <- function(min_window_side, recommended_r_max_ratio = 0.25) {
     recommended_r_max_ratio * min_window_side
 }
 
 #' Create the radius vector given the maximum radius and pattern.
+#'
+#' @param r_max Maximum radius.
+#' @param min_window_side The minimum window side length.
+#' @param n_max_break The maximum number of distance values.
 create_r_vec <- function(r_max, min_window_side, n_max_break = 2048L) {
     n_break_num <- r_max / min_window_side * n_max_break
     # Use round or floor. It should not matter much. If we chose the

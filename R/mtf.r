@@ -14,6 +14,9 @@
 
 
 #' Check that the given mark test function names are valid.
+#'
+#' @param mtf_name A string giving the name of the mark test function.
+#'                 Possible names are '1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs'.
 check_mtf <- function(mtf_name) {
     available <- c('1', 'm', 'mm', 'gamma', 'gammaAbs', 'morAbs')
 
@@ -64,6 +67,9 @@ create_mtf_func_morAbs <- function(mark_stat_l) {
 #'
 #' Given the names of mark test functions and the required mark statistics,
 #' produce mark test functions as closures.
+#'
+#' @param mtf_name The name of mark test function.
+#' @param mark_stat_l List of required mark statistics.
 create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
     mtf_func_constructor <- paste('create_mtf_func_', mtf_name, sep = '')
     mtf_func_l <- lapply(mtf_func_constructor, function(constructor) {
@@ -75,6 +81,9 @@ create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
 #'
 #' Adds only those mark statistics on the result list which are needed by
 #' the K_f functions to be calculated from the given f.
+#'
+#' @param marks A vector of marks of a point pattern.
+#' @param mtf_name The name of mark test function.
 mark_distr_stats <- function(marks, mtf_name) {
     add_scaling_coeff <- function(res_l, mtf, coeff) {
         res_l[[paste(mtf, '_coeff', sep = '')]] <- coeff
@@ -149,6 +158,11 @@ mark_distr_stats <- function(marks, mtf_name) {
 #' function. This way each pair of points has exactly one coefficient
 #' tailored for them.
 #'
+#' @param weight_vec A vector of weights.
+#' @param mark_stat Mark statistics.
+#' @param mtf_name A vector containing the names of the mark test functions.
+#' @param one_per_lambda2 An estimate for the inverse of the estimate of
+#'                        the intensity squared
 #' @return A matrix of weights. Each column is for a different mark test
 #'   function. Each row is for a different _ordered_ point pair where
 #'   (x1, x2) is different from (x2, x1).

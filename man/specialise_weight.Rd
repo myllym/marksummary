@@ -5,6 +5,17 @@
   specialise_weight(weight_vec, mark_stat, mtf_name,
     one_per_lambda2)
 }
+\arguments{
+  \item{weight_vec}{A vector of weights.}
+
+  \item{mark_stat}{Mark statistics.}
+
+  \item{mtf_name}{A vector containing the names of the mark
+  test functions.}
+
+  \item{one_per_lambda2}{An estimate for the inverse of the
+  estimate of the intensity squared}
+}
 \value{
   A matrix of weights. Each column is for a different mark
   test function. Each row is for a different _ordered_

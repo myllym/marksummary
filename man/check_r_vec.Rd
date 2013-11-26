@@ -4,6 +4,11 @@
 \usage{
   check_r_vec(r_vec, min_window_side)
 }
+\arguments{
+  \item{r_vec}{Given radius vector.}
+
+  \item{min_window_side}{The minimum window side length.}
+}
 \description{
   Check that the given radius vector makes sense.
 }

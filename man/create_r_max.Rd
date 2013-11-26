@@ -5,6 +5,12 @@
   create_r_max(min_window_side,
     recommended_r_max_ratio = 0.25)
 }
+\arguments{
+  \item{min_window_side}{The minimum window side length.}
+
+  \item{recommended_r_max_ratio}{The 'recommended' r_max /
+  min_window_size ratio.}
+}
 \description{
   Create the maximum radius given the pattern.
 }

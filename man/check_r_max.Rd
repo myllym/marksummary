@@ -4,6 +4,11 @@
 \usage{
   check_r_max(r_max, min_window_side)
 }
+\arguments{
+  \item{r_max}{Given value for the maximum radius.}
+
+  \item{min_window_side}{The minimum window side length.}
+}
 \description{
   Check that the given maximum radius makes sense.
 }

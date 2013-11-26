@@ -5,8 +5,8 @@
   min_window_side_length(pattern)
 }
 \arguments{
-  \item{A}{\code{\link[spatstat]{ppp}} object that has a
-  rectangular window.}
+  \item{pattern}{A \code{\link[spatstat]{ppp}} object that
+  has a rectangular window.}
 }
 \value{
   A scalar value giving the length of the shorter edge of

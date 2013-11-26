@@ -4,6 +4,14 @@
 \usage{
   create_r_vec(r_max, min_window_side, n_max_break = 2048L)
 }
+\arguments{
+  \item{r_max}{Maximum radius.}
+
+  \item{min_window_side}{The minimum window side length.}
+
+  \item{n_max_break}{The maximum number of distance
+  values.}
+}
 \description{
   Create the radius vector given the maximum radius and
   pattern.

@@ -4,6 +4,11 @@
 \usage{
   is.rectangle(x, ...)
 }
+\arguments{
+  \item{x}{An owin object to be checked.}
+
+  \item{...}{Ignored.}
+}
 \description{
   Checks if a window object is a rectangle
 }

@@ -203,6 +203,8 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
 
 #' Checks if a window object is a rectangle
 #'
+#' @param x An owin object to be checked.
+#' @param ... Ignored.
 #' @importFrom spatstat is.owin
 is.rectangle <- function(x, ...) {
     if(!is.owin(x)) stop("x is not an owin object.")
@@ -211,8 +213,10 @@ is.rectangle <- function(x, ...) {
 
 #' Checks if a window object is a circle
 #'
-#' @param digit The accuracy to check whether the points at the polygonial boundary
+#' @param x An object to be checked.
+#' @param digits The accuracy to check whether the points at the polygonial boundary
 #'               are on the arch of a circle.
+#' @param ... Ignored.
 #' @importFrom spatstat is.owin
 is.disc <- function(x, digits=6, ...) {
     if(!is.owin(x)) stop("x is not an owin object.")
@@ -227,6 +231,8 @@ is.disc <- function(x, digits=6, ...) {
 
 #' Finds the radius and centre of a circle defined by a polygonial boundary
 #'
+#' @param x An owin object.
+#' @param ... Ignored.
 disc_param <- function(x, ...) {
     if(!is.disc(x)) stop("x is not a disc.")
     R <- diff(x[['xrange']])/2
@@ -237,6 +243,8 @@ disc_param <- function(x, ...) {
 
 
 #' Checks that the given pattern is valid.
+#'
+#' @param pattern A pattern to be checked.
 #'
 #' @importFrom spatstat is.ppp
 #' @importFrom spatstat is.empty.ppp
@@ -271,6 +279,8 @@ check_pattern <- function(pattern) {
 }
 
 #' Check that the given number of permutations makes sense.
+#'
+#' @param nsim The value/object to be checked.
 check_n_perm <- function(nsim) {
     if (length(nsim) != 1L || !is.finite(nsim) || nsim < 0L) {
         stop('Number of permutations has to be a scalar, finite, ',
@@ -282,6 +292,8 @@ check_n_perm <- function(nsim) {
 #'
 #' Notice that this estimator is biased.
 #'
+#' @param pattern A \code{\link[spatstat]{ppp}} object.
+#' @param use_biased_lambda2 A logical. Use the unbiased estimator or not.
 #' @importFrom spatstat area.owin
 one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
     if (length(use_biased_lambda2) != 1L ||
@@ -303,6 +315,8 @@ one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
 
 
 #' Besag's L-transform.
+#'
+#' @param k A vector of values to be transformed.
 besags_L <- function(k) {
     sqrt(1 / pi * k)
 }
@@ -314,6 +328,10 @@ besags_L <- function(k) {
 #'
 #' @param all_k_a An array containing all K_f for all patterns. Dimensions:
 #'   orig_and_perm, summ_func, r.
+#' @param is_any_mark_neg A logical.
+#' @param is_any_mark_pos A logical.
+#' @param sep_char A character used to separate L_char and mtf_name.
+#' @param L_char A character used for the tranformed function.
 #' @return An array of dimensions: orig_and_perm, summ_func, r. The size of
 #'   the second dimension depends on how many K_f functions had a valid
 #'   L-transform.
@@ -342,6 +360,8 @@ all_besags_L <- function(all_k_a, is_any_mark_neg, is_any_mark_pos,
 
 
 #' Calculates the cumulated K_f-estimates.
+#'
+#' @param ... Arguments to be passed to rho_f.
 K_f <- function(...) {
     rho_f_m <- rho_f(...)
     # as.matrix is needed if rho_f_m has only one r-value.

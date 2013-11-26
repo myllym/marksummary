@@ -4,6 +4,9 @@
 \usage{
   besags_L(k)
 }
+\arguments{
+  \item{k}{A vector of values to be transformed.}
+}
 \description{
   Besag's L-transform.
 }

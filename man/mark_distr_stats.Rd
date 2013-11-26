@@ -4,6 +4,11 @@
 \usage{
   mark_distr_stats(marks, mtf_name)
 }
+\arguments{
+  \item{marks}{A vector of marks of a point pattern.}
+
+  \item{mtf_name}{The name of mark test function.}
+}
 \description{
   Adds only those mark statistics on the result list which
   are needed by the K_f functions to be calculated from the

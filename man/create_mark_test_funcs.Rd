@@ -4,6 +4,11 @@
 \usage{
   create_mark_test_funcs(mtf_name, mark_stat_l)
 }
+\arguments{
+  \item{mtf_name}{The name of mark test function.}
+
+  \item{mark_stat_l}{List of required mark statistics.}
+}
 \description{
   Given the names of mark test functions and the required
   mark statistics, produce mark test functions as closures.

@@ -4,6 +4,9 @@
 \usage{
   check_pattern(pattern)
 }
+\arguments{
+  \item{pattern}{A pattern to be checked.}
+}
 \description{
   Checks that the given pattern is valid.
 }
