@@ -15,7 +15,7 @@ Install the library to R with the following two R commands:
 
 ```R
 library(devtools)
-install_github('marksummary', username = 'myllym')
+install_github('myllym/marksummary')
 ```
 
 If you do not have the library ´devtools´ installed, install it first by
