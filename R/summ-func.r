@@ -276,9 +276,12 @@ check_pattern <- function(pattern) {
     if (!is.numeric(marks)) {
         stop('The marks must be of type numeric or integer.')
     }
-    if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
-        stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
+    if ( !is.polygonal(pattern[['window']]) ) {
+        stop('The window must be specified as \"polygonal\".')
     }
+#    if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
+#        stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
+#    }
     if (any(duplicated(matrix(c(pattern[['x']], pattern[['y']]), ncol = 2L),
                        MARGIN = 1L))) {
         stop('The pattern must be simple i.e. without duplicate points ',
