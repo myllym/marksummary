@@ -69,6 +69,14 @@ summ_func_random_labelling <-
     check_pattern(pattern)
     check_n_perm(nsim)
 
+    # 'translate' edge correction, only rectangle and disc windows are allowed.
+    # For 'none' correction, also other windows can be used.
+    if(edge_correction != 'none') {
+        if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
+            stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
+        }
+    }
+
     # Handle things related to distances of points.
     radius_l <- consider_radius(pattern, r_max, r_vec)
     r_vec <- radius_l[['r_vec']]
