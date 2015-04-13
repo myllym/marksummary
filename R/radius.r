@@ -4,8 +4,9 @@
 #'   window.
 #' @return A scalar value giving the length of the shorter edge of the
 #'   window.
+#' @importFrom spatstat is.rectangle
 min_window_side_length <- function(pattern) {
-    if(!is.rectangle(X[['window']]))
+    if(!is.rectangle(pattern[['window']]))
         warning("The window is not a rectangle. The minimum of the side length taken from the enclosing rectangle.")
     with(pattern[['window']], min(diff(xrange), diff(yrange)))
 }

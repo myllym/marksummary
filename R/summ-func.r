@@ -56,6 +56,7 @@ summ_func <- function(..., nsim = 0L) {
 #'   the row named "original".
 #' @importFrom spatstat pairdist.ppp
 #' @importFrom abind abind
+#' @importFrom spatstat is.rectangle
 #' @export
 #' @examples
 #' require(spatstat)
@@ -209,16 +210,6 @@ plot.all_summ_func_rl <- function(x, mtf_name = NULL, L = TRUE, nrow = NULL,
     # Plot using ggplot.
 }
 
-#' Checks if a window object is a rectangle
-#'
-#' @param x An owin object to be checked.
-#' @param ... Ignored.
-#' @importFrom spatstat is.owin
-is.rectangle <- function(x, ...) {
-    if(!is.owin(x)) stop("x is not an owin object.")
-    x[['type']] == 'rectangle'
-}
-
 #' Checks if a window object is a circle
 #'
 #' @param x An object to be checked.
@@ -256,6 +247,8 @@ disc_param <- function(x, ...) {
 #'
 #' @importFrom spatstat is.ppp
 #' @importFrom spatstat is.empty.ppp
+#' @importFrom spatstat is.polygonal
+#' @importFrom spatstat is.rectangle
 check_pattern <- function(pattern) {
     if (length(pattern) < 1L) {
         stop('Pattern was not given.')
