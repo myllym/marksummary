@@ -1,14 +1,20 @@
-citHeader("To cite package ‘spptest’ in publications use:")
+citHeader("To cite package ‘marksummary’ in publications use:")
 
 citEntry(
     entry = "Article",
     title = "Deviation test construction and power comparison for marked spatial point patterns",
-    journal = "arXiv:1306.1028 [stat.ME]",
-    year = "2013",
-    author = "M. Myllymäki, P. Grabarnik, H. Seijo and D. Stoyan",
-    textVersion = "Myllymäki, M., Grabarnik, P., Seijo, H., and Stoyan, D. (2013).
+	author = personList(as.person("M. Myllymäki"),
+                        as.person("P. Grabarnik"),
+                        as.person("H. Seijo"),
+                        as.person("D. Stoyan")),
+    journal = "Spatial Statistics",
+    year = "2015",
+    volume = "11",
+    pages = "19--34",
+    url = "https://dx.doi.org/10.1016/j.spasta.2014.11.004",
+    textVersion = "Myllymäki, M., Grabarnik, P., Seijo, H., and Stoyan, D. (2015).
 Deviation test construction and power comparison for marked spatial point patterns.
-arXiv:1306.1028 [stat.ME]."
+Spatial Statistics 11, 19-34. doi: 10.1016/j.spasta.2014.11.004"
 )
 
 citEntry(
