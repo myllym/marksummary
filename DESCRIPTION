@@ -14,7 +14,7 @@ Maintainer: Mari Myllymäki <mari.j.myllymaki@gmail.com>
 Version: 0.1.3
 Date: 2013-02-27
 License: GPL-3
-Title: Calculate summary functions for marked point patterns.
+Title: Calculate summary functions for marked point patterns
 Description: Calculate K_f summary functions for marked point patterns where
     f stands for different mark test functions.
 Depends:
