@@ -1,4 +1,4 @@
 library(testthat)
 library(marksummary)
 
-test_package('marksummary')
+test_check('marksummary')
