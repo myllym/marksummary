@@ -1,17 +1,16 @@
 Package: marksummary
 Encoding: UTF-8
 Authors@R: c(
-    person(given = 'Henri', family = 'Seijo', role = c('aut', 'cre'),
+    person(given = 'Henri', family = 'Seijo', role = c('aut'),
     email = 'henri.seijo@iki.fi'),
     person(given = 'Mari', family = 'Myllymäki',
     role = c('aut', 'cre', 'ths'),
-    email = list('mari.myllymaki@aalto.fi', 'mari.j.myllymaki@gmail.com')),
+    email = 'mari.j.myllymaki@gmail.com'),
     person(given = 'Pavel', family = 'Grabarnik', role = c('aut'),
     email = list('gpya@rambler.ru', 'pavel.grabarnik@gmail.com'))
     )
 Author: Mari Myllymäki, Henri Seijo and Pavel Grabarnik
-Maintainer: Mari Myllymäki <mari.j.myllymaki@gmail.com> and Henri Seijo
-    <henri.seijo@iki.fi>
+Maintainer: Mari Myllymäki <mari.j.myllymaki@gmail.com>
 Version: 0.1.3
 Date: 2013-02-27
 License: GPL-3
