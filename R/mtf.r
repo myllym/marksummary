@@ -84,6 +84,7 @@ create_mark_test_funcs <- function(mtf_name, mark_stat_l) {
 #'
 #' @param marks A vector of marks of a point pattern.
 #' @param mtf_name The name of mark test function.
+#' @importFrom stats var
 mark_distr_stats <- function(marks, mtf_name) {
     add_scaling_coeff <- function(res_l, mtf, coeff) {
         res_l[[paste(mtf, '_coeff', sep = '')]] <- coeff
@@ -115,7 +116,7 @@ mark_distr_stats <- function(marks, mtf_name) {
 
     if (is.element('gamma', mtf_name)) {
         if (length(res[['var']]) < 1L) {
-            res[['var']] <- var(marks)
+            res[['var']] <- stats::var(marks)
         }
         res <- add_scaling_coeff(res, 'gamma', 1 / res[['var']])
     }
