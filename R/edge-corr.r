@@ -51,6 +51,7 @@ translational_correction <- function(window, x1, y1, x2, y2) {
 #'   decides for which point pairs an edge correction is calculated.
 #' @return A vector of edge correction coefficients for each point pair
 #'   picked by nearby_arr_idx.
+#' @importFrom spatstat area.owin
 do_edge_correction <- function(pattern, corr_name, nearby_arr_idx) {
     if (corr_name == 'translate') {
         window <- pattern[['window']]
@@ -66,7 +67,7 @@ do_edge_correction <- function(pattern, corr_name, nearby_arr_idx) {
 
         edge_corr <- translational_correction(window, x1, y1, x2, y2)
     } else if (corr_name == 'none') {
-        coeff <- 1 / area.owin(pattern)
+        coeff <- 1 / spatstat::area.owin(pattern)
         edge_corr <- rep.int(coeff, nrow(nearby_arr_idx))
     } else {
         stop('This edge correction has not been implemented: ', corr_name)
