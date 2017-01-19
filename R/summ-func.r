@@ -297,7 +297,7 @@ check_n_perm <- function(nsim) {
 #'
 #' @param pattern A \code{\link[spatstat]{ppp}} object.
 #' @param use_biased_lambda2 A logical. Use the unbiased estimator or not.
-#' @importFrom spatstat area.owin
+#' @import spatstat
 one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
     if (length(use_biased_lambda2) != 1L ||
         !is.logical(use_biased_lambda2) ||
