@@ -32,3 +32,4 @@ Collate:
     'mtf.r'
     'edge-corr.r'
     'summ-func.r'
+RoxygenNote: 5.0.1
