@@ -42,7 +42,6 @@ translational_correction <- function(window, x1, y1, x2, y2) {
 
 #' Calculate the edge correction for those point pairs that matter.
 #'
-#' @importFrom spatstat area.owin
 #' @param pattern A \code{\link[spatstat]{ppp}} object from which the point
 #'   pairs will be picked.
 #' @param corr_name The name of the edge correction. Options are 'translate'
