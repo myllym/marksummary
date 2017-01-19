@@ -72,7 +72,7 @@ summ_func_random_labelling <-
     # 'translate' edge correction, only rectangle and disc windows are allowed.
     # For 'none' correction, also other windows can be used.
     if(edge_correction != 'none') {
-        if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
+        if ( !( spatstat::is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
             stop('The window must have type \"rectangle\" or be a disc specified as \"polygonal\".')
         }
     }
@@ -252,10 +252,10 @@ check_pattern <- function(pattern) {
     if (length(pattern) < 1L) {
         stop('Pattern was not given.')
     }
-    if (!is.ppp(pattern)) {
+    if (!spatstat::is.ppp(pattern)) {
         stop('The pattern must be a ppp object.')
     }
-    if (is.empty.ppp(pattern)) {
+    if (spatstat::is.empty.ppp(pattern)) {
         stop('The pattern must not be empty.')
     }
     marks <- pattern[['marks']]
@@ -268,7 +268,7 @@ check_pattern <- function(pattern) {
     if (!is.numeric(marks)) {
         stop('The marks must be of type numeric or integer.')
     }
-    if ( !(is.polygonal(pattern[['window']]) || is.rectangle(pattern[['window']])) ) {
+    if ( !(spatstat::is.polygonal(pattern[['window']]) || spatstat::is.rectangle(pattern[['window']])) ) {
         stop('The window must be specified as \"polygonal\" or \"rectangle\".')
     }
 #    if ( !( is.rectangle(pattern[['window']]) || is.disc(pattern[['window']])) ) {
@@ -305,7 +305,7 @@ one_per_lambda_squared <- function(pattern, use_biased_lambda2) {
         stop('use_biased_lambda2 must be either TRUE or FALSE.')
     }
 
-    area <- area.owin(pattern[['window']])
+    area <- spatstat::area.owin(pattern[['window']])
     n_point <- pattern[['n']]
     if (use_biased_lambda2) {
         one_per_lambda2 <- area * area / (n_point * n_point)
