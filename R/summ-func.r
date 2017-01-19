@@ -392,6 +392,7 @@ K_f <- function(...) {
 #' @param n_bin The amount of bins that the returned vector should have.
 #' @return A rho_f vector with length of n_bin.
 #' @useDynLib marksummary
+#' @import Rcpp
 weigh_and_bin <- function(f_value, weight, idx_vec, n_bin) {
     .Call('weighAndBin', f_value, weight, idx_vec, n_bin,
           PACKAGE = 'marksummary')
