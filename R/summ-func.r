@@ -54,9 +54,8 @@ summ_func <- function(..., nsim = 0L) {
 #'   the randomly labelled patterns with dimensions orig_and_perm,
 #'   summ_func, r. The estimates for the given marked point pattern are on
 #'   the row named "original".
-#' @importFrom spatstat pairdist.ppp
 #' @importFrom abind abind
-#' @importFrom spatstat is.rectangle
+#' @import spatstat
 #' @export
 #' @examples
 #' require(spatstat)
