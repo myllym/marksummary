@@ -41,7 +41,7 @@ test_that('only original; only K_1; include L; default radius vector', {
 
 test_random_labelling_dim <- function(pattern, n_perm, mtf_name,
                                       do_besags_L, r_vec) {
-    res_l <- summ_func_random_labelling(pattern, n_perm = n_perm,
+    res_l <- summ_func_random_labelling(pattern, nsim = n_perm,
                                         mtf_name = mtf_name,
                                         do_besags_L = do_besags_L,
                                         r_vec = r_vec)
